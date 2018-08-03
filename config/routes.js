@@ -62,4 +62,9 @@ module.exports.routes = {
   '/terms':                   '/legal/terms',
   '/logout':                  '/api/v1/account/logout',
 
+
+
+  'GET /admin':                { view:   'admin/index' },
+
+
 };
