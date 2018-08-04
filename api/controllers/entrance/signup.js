@@ -18,7 +18,6 @@ the account verification message.)`,
 
 
   inputs: {
-
     emailAddress: {
       required: true,
       type: 'string',

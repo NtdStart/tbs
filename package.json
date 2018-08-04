@@ -14,7 +14,8 @@
     "sails-hook-apianalytics": "^2.0.0",
     "sails-hook-organics": "^0.13.0",
     "sails-hook-orm": "^2.0.0-16",
-    "sails-hook-sockets": "^1.4.0"
+    "sails-hook-sockets": "^1.4.0",
+    "sails-mongo": "^1.0.1"
   },
   "devDependencies": {
     "@sailshq/eslint": "^4.19.3",
