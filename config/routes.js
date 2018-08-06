@@ -65,6 +65,6 @@ module.exports.routes = {
 
 
   'GET /admin':                { view:   'admin/index' },
-
+  'POST   /webhook/ghtk':               "Tracking.track",
 
 };

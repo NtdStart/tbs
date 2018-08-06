@@ -70,7 +70,7 @@ and exposed as \`req.me\`.)`
 
 
   fn: async function (inputs, exits) {
-
+    sails.log(inputs)
     // Look up by the email address.
     // (note that we lowercase it to ensure the lookup is always case-insensitive,
     // regardless of which database we're using)
