@@ -52,6 +52,6 @@ module.exports = {
         console.log(trackings[0]);
         
 
-        return res.view('trackings/trackings', { trackings })
+        return res.view('admin/index', { trackings })
     }
 }
