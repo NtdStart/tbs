@@ -1,0 +1,78 @@
+<div class="container">
+
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Label_id</th>
+                <th scope="col">Partner_id</th>
+                <th scope="col">Status_id</th>
+                <th scope="col">Action_time</th>
+                <th scope="col">Reason_code</th>
+                <th scope="col">Reason</th>
+                <th scope="col">Weight</th>
+                <th scope="col">Free</th>
+                <th scope="col">Pick_money</th>
+            </tr>
+        </thead>
+
+        <% trackings.forEach(function(tracking, index){ %>
+            <tbody>
+                <th scope="row">
+                    <%= index + 1%>
+                </th>
+                <td>
+                    <%=tracking.label_id%>
+                </td>
+                <td>
+                    <%= tracking.arrJson[0].partner_id%>
+                    
+                </td>
+                <td>
+                        <%= tracking.arrJson[0].status_id%>
+                       
+                </td>
+                <td>
+                        <% tracking.arrJson.forEach((arr, i) => { %>
+                            Lần <%= i + 1%>: <%= arr.action_time %>
+                            <br />
+                                <% }) %>
+                                
+                    </td>
+
+                    <td>
+                            <% tracking.arrJson.forEach((arr, i) => { %>
+                                Lần <%= i + 1%>: <%= arr.season_code %>
+                                <br />
+                                    <% }) %>
+                                   
+                        </td>
+
+                        <td>
+                                <% tracking.arrJson.forEach((arr, i) => { %>
+                                    Lần <%= i + 1%>: <%= arr.reason %>
+                                    <br />
+                                        <% }) %>
+                                        
+                            </td>
+                            <td>
+                                    <% tracking.arrJson.forEach((arr, i) => { %>
+                                        Lần <%= i + 1%>: <%= arr.weight %>
+                                        <br />
+                                            <% }) %>
+                                            
+                               
+                
+                                <td>
+                                        <% tracking.arrJson.forEach((arr, i) => { %>
+                                            Lần <%= i + 1%>: <%= arr.fee %>
+                                            <br />
+                                                <% }) %>
+                                                
+                                    </td>
+
+            </tbody>
+            <% })%>
+
+    </table>
+</div>
