@@ -21,37 +21,44 @@ module.exports = {
             
             res.ok();
         }
-
-        // data.array.forEach(element => {
-            
-        // });
-
-        // const data = JSON.stringify(req.body);
-        // await Order.create({ data }).fetch();
-        // return res.send(req.body);
     },
-    getOrder: async (req, res) => {
-        const trackings = await Tracking.find({});
-        if(!trackings) return sails.log('Cannot find orders');
 
-        
+    getOrder: async (req, res) => {
+
+        const trackings = await Tracking.find({}).catch(e => console.log('error: ' + e));
+        if(!trackings) return sails.log('Cannot find orders');
         
         trackings.forEach((tracking, index) => {
             // console.log(tracking);
-            const arrData = tracking.data.split(';');
+            const arrData = tracking.data.split(';');  //mảng các string
             // console.log(arrData);
             const arr = [];
-            arrData.forEach(a => {  //mảng các string
+            arrData.forEach(a => {  
                 arr.push(JSON.parse(a));   
                 // console.log(JSON.parse(a));
-                
             })
             tracking['arrJson'] = arr;
-        });
-        
-        console.log(trackings[0]);
-        
 
+            if(tracking.handling){
+                const arrHandling = tracking.handling.split(';;');
+                tracking['arrHandling'] = arrHandling;
+            }
+            
+        });
+      
+        // console.log(trackings[0])
         return res.view('admin/index', { trackings })
-    }
+    },
+    handling: async function(req, res){
+        const { message, label_id } = req.body;
+        const tracking = await Tracking.findOne({ "label_id" : label_id }).catch(error => sails.log(error));
+        if(!tracking) console.log('cannot find tracking');
+        
+    
+        const newTracking = await Tracking.updateOne({ "label_id" : label_id }, { handling: tracking.handling? tracking.handling + ";;" + message : "" + message });
+        if(!newTracking) console.log('cannot update tracking');
+    
+        return res.redirect('/admin');
+      }
+    
 }

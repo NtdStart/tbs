@@ -18,7 +18,7 @@ module.exports = {
         // reason: {type:'string'},
         // weight: {type:'number', columnType:'FLOAT'},
         // fee: {type:'number'}
-      
+        handling: { type: 'string'},
   
     },
   

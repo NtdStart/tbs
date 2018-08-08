@@ -1,58 +1,81 @@
 <div class="container">
 
-        <table class="table">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Label_id</th>
-                    <th scope="col">Partner_id</th>
-                    <th scope="col">Status_id</th>
-                    <th scope="col">Reason_code</th>
-                    <th scope="col">Reason</th>
-                    <th scope="col">Pick_money</th>
-                    <th scope="col">Thông tin xử lý</th>
-                </tr>
-            </thead>
     
-            <% trackings.forEach(function(tracking, index){ %>
-                <tbody>
-                    <th scope="row">
-                        <%= index + 1%>
-                    </th>
-                    <td>
-                        <%=tracking.label_id%>
-                    </td>
-                    <td>
-                        <%= tracking.arrJson[0].partner_id%>  
-                    </td>
-                    <td>
-                        <%= tracking.arrJson[0].status_id%>
-                    </td>
-    
-                    <td>
-                        <%=  tracking.arrJson[tracking.arrJson.length - 1].reason_code %>
-                    </td>
-    
-                    <td>
-                        <% tracking.arrJson.forEach((arr, i) => { %>
-                            Lần
-                            <%= i + 1%>:
-                                <%= arr.reason %> :
-                                    <%= arr.action_time %>
-                                        <br />
-                                        <% }) %>
-                    </td>
-                    <td>
-                        <% tracking.arrJson.forEach((arr, i) => { %>
-                            Lần
-                            <%= i + 1%>:
-                                <%= arr.fee %>
+
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Label_id</th>
+                <th scope="col">Partner_id</th>
+                <th scope="col">Status_id</th>
+                <th scope="col">Code</th>
+                <th scope="col">Reason</th>
+                <th scope="col">Pick_money</th>
+                <th scope="col">Thông tin xử lý</th>
+            </tr>
+        </thead>
+
+        <% trackings.forEach(function(tracking, index){ %>
+            <tbody>
+                <th scope="row">
+                    <%= index + 1%>
+                </th>
+                <td>
+                    <%=tracking.label_id%>
+                </td>
+                <td>
+                    <%= tracking.arrJson[0].partner_id%>
+                </td>
+                <td>
+                    <%= tracking.arrJson[0].status_id%>
+                </td>
+
+                <td>
+                    <%=  tracking.arrJson[tracking.arrJson.length - 1].reason_code %>
+                </td>
+
+                <td>
+                    <% tracking.arrJson.forEach((arr, i) => { %>
+                        Lần
+                        <%= i + 1%>:
+                            <%= arr.reason %> :
+                                <%= arr.action_time %>
                                     <br />
                                     <% }) %>
-                    </td>
-    
-                </tbody>
-                <% })%>
-    
-        </table>
-    </div>
+                </td>
+                <td>
+                    <% tracking.arrJson.forEach((arr, i) => { %>
+                        Lần
+                        <%= i + 1%>:
+                            <%= arr.fee %>
+                                <br />
+                                <% }) %>
+                </td>
+                <td>
+                    <!-- <span class="input-group-btn">
+                        <button type="button" id="btn" onclick="myFunction()" class="btn btn-default">Xử lý</button>
+                    </span> -->
+                    <% if(tracking.arrHandling){ %>
+                       <% tracking.arrHandling.forEach((h, i) => { %>
+                        Lần <%= i + 1%>: <%= h %>
+                        <br />
+                                <% }) %>
+                        <% } %>
+                    <form action="handling" method="post" class="form-group" >
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="message">
+                            <input type="text" class="form-control" name="label_id" style="display: none" value="<%= tracking.label_id%>">
+                        </div>
+                        
+                        <button class="btn btn-success">Save</button>
+                    </form>
+                    
+                </td>
+            </tbody>
+            <% })%>
+            
+            </script>
+    </table>
+
+</div>
