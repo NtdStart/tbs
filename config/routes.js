@@ -67,7 +67,7 @@ module.exports.routes = {
   'GET /admin':                { view:   'admin/index', action: 'Tracking/getOrder',locals: { layout: 'layouts/layout-admin'} },
   'POST   /webhook/ghtk':      'Tracking.track',
   'GET /tracking':              'Tracking.getOrder',
-  'POST  /handling':                      'Tracking.handling' , 
+  'POST  /handling':             'Tracking.handling' , 
 
 
 };

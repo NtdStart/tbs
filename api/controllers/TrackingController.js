@@ -8,7 +8,7 @@ module.exports = {
         const tracking = await Tracking.findOne({ 'label_id': label_id }).catch(error => sails.log(error));
         if(!tracking) {
             const newTracking = await Tracking.create({ label_id,  data: newData }).fetch()
-            if(!newTracking) console.log('cannot create tracking')
+            if(!newTracking) newTracking = {};
             // console.log(newTracking);
 
             res.ok();
@@ -25,8 +25,8 @@ module.exports = {
 
     getOrder: async (req, res) => {
 
-        const trackings = await Tracking.find({}).catch(e => console.log('error: ' + e));
-        if(!trackings) return sails.log('Cannot find orders');
+        let trackings = await Tracking.find({}).catch(e => console.log('error: ' + e));
+        if(!trackings) trackings = [];
         
         trackings.forEach((tracking, index) => {
             // console.log(tracking);
@@ -52,7 +52,7 @@ module.exports = {
     handling: async function(req, res){
         const { message, label_id } = req.body;
         const tracking = await Tracking.findOne({ "label_id" : label_id }).catch(error => sails.log(error));
-        if(!tracking) console.log('cannot find tracking');
+        if(!tracking) tracking = {};
         
     
         const newTracking = await Tracking.updateOne({ "label_id" : label_id }, { handling: tracking.handling? tracking.handling + ";;" + message : "" + message });
