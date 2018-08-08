@@ -36,12 +36,12 @@ var cssFilesToInject = [
   // Bring in `.css` files for themes and style guides (e.g. Bootstrap, Foundation)
 
   // Cái này nếu sử dụng tempate thì khỏi cần nữa add style/style.css là đủ rồi
- // 'dependencies/**/*.css',
+  '!dependencies/**/*.css',
 
   // All of the rest of your custom `.css` files will be injected here,
   // in no particular order.  To customize the ordering, add additional
   // items here, _above_ this one.
-  //'styles/**/*.css'
+  '!styles/**/*.css',
   'styles/style.css'
 ];
 
@@ -79,7 +79,7 @@ var jsFilesToInject = [
   'dependencies/bowser.js',
   'dependencies/vue.js',
   'dependencies/**/*.js',
-
+  '!dependencies/bootstrap-4/bootstrap-4.bundle.js',
   // First amongst the app-level files, bring in cloud configuration
   'js/cloud.setup.js',
 
