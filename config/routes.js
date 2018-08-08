@@ -22,11 +22,11 @@ module.exports.routes = {
   'GET /legal/privacy':      { view:   'pages/legal/privacy' },
   'GET /contact':            { view:   'pages/contact' },
 
-  'GET /signup':             { action: 'entrance/view-signup' },
+  'GET /signup':             { action: 'entrance/view-signup',locals:{layout:'layouts/layout-login.ejs'} },
   'GET /email/confirm':      { action: 'entrance/confirm-email' },
   'GET /email/confirmed':    { view:   'pages/entrance/confirmed-email' },
 
-  'GET /login':              { action: 'entrance/view-login' },
+  'GET /login':              { action: 'entrance/view-login' ,locals:{layout:'layouts/layout-login.ejs'}},
   'GET /password/forgot':    { action: 'entrance/view-forgot-password' },
   'GET /password/new':       { action: 'entrance/view-new-password' },
 

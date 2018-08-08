@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+      <!--STYLES-->
+      <link rel="stylesheet" href="/styles/style.css">
+      <!--STYLES END-->
+    <title>Sign In</title>
+    <style>
+      #loader {
+        transition: all 0.3s ease-in-out;
+        opacity: 1;
+        visibility: visible;
+        position: fixed;
+        height: 100vh;
+        width: 100%;
+        background: #fff;
+        z-index: 90000;
+      }
+
+      #loader.fadeOut {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: calc(50% - 20px);
+        left: calc(50% - 20px);
+        background-color: #333;
+        border-radius: 100%;
+        -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+        animation: sk-scaleout 1.0s infinite ease-in-out;
+      }
+
+      @-webkit-keyframes sk-scaleout {
+        0% { -webkit-transform: scale(0) }
+        100% {
+          -webkit-transform: scale(1.0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes sk-scaleout {
+        0% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        } 100% {
+          -webkit-transform: scale(1.0);
+          transform: scale(1.0);
+          opacity: 0;
+        }
+      }
+    </style>
+</head>
+  <body class="app">
+    <div id="loader">
+      <div class="spinner"></div>
+    </div>
+
+    <script>
+      window.addEventListener('load', () => {
+        const loader = document.getElementById('loader');
+        setTimeout(() => {
+          loader.classList.add('fadeOut');
+        }, 300);
+      });
+    </script>
+     <%- body %>
+ <!--SCRIPTS-->
+ <script src="/dependencies/sails.io.js"></script>
+ <script src="/dependencies/vendor.js"></script>
+ <script src="/dependencies/bundle.js"></script>
+ <script src="/dependencies/lodash.js"></script>
+ <script src="/dependencies/jquery.min.js"></script>
+ <script src="/dependencies/bowser.js"></script>
+ <script src="/dependencies/vue.js"></script>
+ <script src="/dependencies/bootstrap-4/bootstrap-4.bundle.js"></script>
+ <script src="/dependencies/cloud.js"></script>
+ <script src="/dependencies/parasails.js"></script>
+ <script src="/js/cloud.setup.js"></script>
+ <script src="/js/components/ajax-button.component.js"></script>
+ <script src="/js/components/ajax-form.component.js"></script>
+ <script src="/js/components/modal.component.js"></script>
+ <script src="/js/utilities/open-stripe-checkout.js"></script>
+ <script src="/js/pages/498.page.js"></script>
+ <script src="/js/pages/account/account-overview.page.js"></script>
+ <script src="/js/pages/account/edit-password.page.js"></script>
+ <script src="/js/pages/account/edit-profile.page.js"></script>
+ <script src="/js/pages/contact.page.js"></script>
+ <script src="/js/pages/dashboard/welcome.page.js"></script>
+ <script src="/js/pages/entrance/confirmed-email.page.js"></script>
+ <script src="/js/pages/entrance/forgot-password.page.js"></script>
+ <script src="/js/pages/entrance/login.page.js"></script>
+ <script src="/js/pages/entrance/new-password.page.js"></script>
+ <script src="/js/pages/entrance/signup.page.js"></script>
+ <script src="/js/pages/faq.page.js"></script>
+ <script src="/js/pages/homepage.page.js"></script>
+ <script src="/js/pages/legal/privacy.page.js"></script>
+ <script src="/js/pages/legal/terms.page.js"></script>
+ <!--SCRIPTS END-->
+</body>
+</html>
