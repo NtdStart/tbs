@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>toibansi</title>
+    <title>Toibansi.com Admin</title>
 
     <% /* Viewport tag for sensible mobile support */ %>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -10,7 +11,6 @@
         <% /*
         Stylesheets
         ========================
-
         Stylesheets can be hard-coded as «link» tags, automatically injected
         by the asset pipeline between "STYLES" and "STYLES END", or both.
         (https://sailsjs.com/docs/concepts/assets/task-automation)
@@ -27,12 +27,10 @@
                     background: #fff;
                     z-index: 90000;
                 }
-
                 #loader.fadeOut {
                     opacity: 0;
                     visibility: hidden;
                 }
-
                 .spinner {
                     width: 40px;
                     height: 40px;
@@ -44,7 +42,6 @@
                     -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
                     animation: sk-scaleout 1.0s infinite ease-in-out;
                 }
-
                 @-webkit-keyframes sk-scaleout {
                     0% {
                         -webkit-transform: scale(0)
@@ -54,7 +51,6 @@
                         opacity: 0;
                     }
                 }
-
                 @keyframes sk-scaleout {
                     0% {
                         -webkit-transform: scale(0);
@@ -100,11 +96,11 @@
                                 <div class="peers ai-c fxw-nw">
                                     <div class="peer">
                                         <div class="logo">
-                                            <img src="assets/static/images/logo.png" alt="">
+                                            <img src="static/images/logo.png" alt="">
                                         </div>
                                     </div>
                                     <div class="peer peer-greed">
-                                        <h5 class="lh-1 mB-0 logo-text">Adminator</h5>
+                                        <h5 class="lh-1 mB-0 logo-text">Quản lý nội bộ</h5>
                                     </div>
                                 </div>
                             </a>
@@ -126,7 +122,7 @@
                             <span class="icon-holder">
                                 <i class="c-blue-500 ti-home"></i>
                             </span>
-                            <span class="title">Tracking</span>
+                            <span class="title">Theo dõi vận đơn</span>
                         </a>
                     </li>
                     <li class="nav-item mT-30 active">
@@ -134,7 +130,7 @@
                                 <span class="icon-holder">
                                     <i class="c-blue-500 ti-home"></i>
                                 </span>
-                                <span class="title">Tracking</span>
+                                <span class="title">Sản phẩm</span>
                             </a>
                         </li>
                 </ul>
@@ -390,7 +386,6 @@
     <% /*
       Client-side JavaScript
       ========================
-
       Scripts can be hard-coded as «script» tags, automatically injected
       by the asset pipeline between "SCRIPTS" and "SCRIPTS END", or both.
       (https://sailsjs.com/docs/concepts/assets/task-automation)

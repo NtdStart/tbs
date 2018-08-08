@@ -24,7 +24,9 @@ module.exports = {
     },
 
     getOrder: async (req, res) => {
-
+        if(!req.me){
+            return res.redirect('/');
+        }
         let trackings = await Tracking.find({}).catch(e => console.log('error: ' + e));
         if(!trackings) trackings = [];
         
