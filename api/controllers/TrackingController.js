@@ -34,7 +34,9 @@ module.exports = {
             // console.log(arrData);
             const arr = [];
             arrData.forEach(a => {  
-                arr.push(JSON.parse(a));   
+                let dataJson = JSON.parse(a);
+                dataJson['action_time'] = convert_time.fn(dataJson['action_time']);
+                arr.push(dataJson);   
                 // console.log(JSON.parse(a));
             })
             tracking['arrJson'] = arr;
@@ -45,17 +47,19 @@ module.exports = {
             }
             
         });
-      
-        // console.log(trackings[0])
-        return res.view('admin/index', { trackings })
+        const me = req.me;
+
+        return res.view('admin/index', { trackings, me, status: ghtk_status_id.STATUS_ID, code: ghtk_status_id.REASON_CODE })
     },
     handling: async function(req, res){
+        // const nameUser = req.me.fullName;
+        const me = req.me;
         const { message, label_id } = req.body;
         const tracking = await Tracking.findOne({ "label_id" : label_id }).catch(error => sails.log(error));
         if(!tracking) tracking = {};
         
     
-        const newTracking = await Tracking.updateOne({ "label_id" : label_id }, { handling: tracking.handling? tracking.handling + ";;" + message : "" + message });
+        const newTracking = await Tracking.updateOne({ "label_id" : label_id }, { handling: tracking.handling? tracking.handling + ";;" + message +`[${me.fullName}]` : "" + message +`[${me.fullName}]`});
         if(!newTracking) console.log('cannot update tracking');
     
         return res.redirect('/admin');
