@@ -70,6 +70,14 @@
               > $Topbar
               > $App Screen Content
     -->
+            <% /* Auto-injected «link» tags: */ %>
+                <!--STYLES-->
+                <link rel="stylesheet" href="/styles/admin/index.css">
+                <link rel="stylesheet" href="/styles/importer.css">
+                <!--STYLES END-->
+
+        <script src="/dependencies/sails.io.js"></script>
+</head>
 
     <!-- @Page Loader -->
     <!-- =================================================== -->
@@ -138,7 +146,14 @@
                 <span class="title">Sản phẩm</span>
               </a>
             </li>
-            
+            <li class="nav-item">
+              <a class="sidebar-link" href="/delay">
+                <span class="icon-holder">
+                  <i class="c-teal-500 ti-view-list-alt"></i>
+                </span>
+                <span class="title">Đơn hàng delay</span>
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -188,6 +203,20 @@
                               <span class="fw-500">John Doe</span>
                               <span class="c-grey-600">liked your <span class="text-dark">post</span>
                               </span>
+                <!-- ### $Sidebar Menu ### -->
+                <ul class="sidebar-menu scrollable pos-r">
+                        <li class="nav-item mT-30 active">
+                                <a class="sidebar-link" href="/delay">
+                                    <span class="icon-holder">
+                                        <i class="c-blue-500 ti-home"></i>
+                                    </span>
+                                    <span class="title">Đơn hàng delay</span>
+                                </a>
+                            </li>
+                    <li class="nav-item mT-30 active">
+                        <a class="sidebar-link" href="/admin">
+                            <span class="icon-holder">
+                                <i class="c-blue-500 ti-home"></i>
                             </span>
                             <p class="m-0">
                               <small class="fsz-xs">5 mins ago</small>
@@ -381,7 +410,6 @@
     <script>
     </script>
     <!--SCRIPTS-->
-    <script src="/dependencies/sails.io.js"></script>
     <script src="/dependencies/vendor.js"></script>
     <script src="/dependencies/bundle.js"></script>
     <script src="/dependencies/lodash.js"></script>
@@ -390,6 +418,7 @@
     <script src="/dependencies/vue.js"></script>
     <script src="/dependencies/cloud.js"></script>
     <script src="/dependencies/parasails.js"></script>
+    <script src="/dependencies/sails.io.js"></script>
     <script src="/js/cloud.setup.js"></script>
     <script src="/js/components/ajax-button.component.js"></script>
     <script src="/js/components/ajax-form.component.js"></script>

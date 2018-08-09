@@ -36,6 +36,8 @@ var cssFilesToInject = [
   // Bring in `.css` files for themes and style guides (e.g. Bootstrap, Foundation)
 
   // Cái này nếu sử dụng tempate thì khỏi cần nữa add style/style.css là đủ rồi
+
+
   '!dependencies/**/*.css',
 
   // All of the rest of your custom `.css` files will be injected here,
@@ -65,7 +67,7 @@ var cssFilesToInject = [
 var jsFilesToInject = [
 
   // Load `sails.io` before everything else.
-  'dependencies/sails.io.js',
+  '!dependencies/sails.io.js',
 
   //Teamplate build
   'dependencies/vendor.js',

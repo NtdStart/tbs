@@ -11,13 +11,15 @@ module.exports = {
       
         label_id :{type:'string'},
         data: { type: 'string'},
+
         // label_id: {type:'string'},
-        // status_id: {type:'number'},
+        
         // action_time: {type:'string'},
         // reason_code: {type:'string'},
         // reason: {type:'string'},
         // weight: {type:'number', columnType:'FLOAT'},
-        // fee: {type:'number'}
+        // fee: {type:'number'},
+        status_id: {type:'number'},
         handling: { type: 'string'},
   
     },
