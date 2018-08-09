@@ -1,4 +1,15 @@
 module.exports = {
+
+    index: async function (req, res) {
+        if(!req.isSocket) return res.badRequest()
+        var socketId = sails.sockets.getId(req)
+        sails.log('My socket ID is: ' + socketId)
+        sails.sockets.join(req,'cskh', function(err) {
+        if (err) {return res.serverError(err);}
+        res.ok()
+      });
+    },
+
     GiaoHangTietKiemWebHooks: async function (req, res) {
         // sails.log(req.body);
 
@@ -11,16 +22,64 @@ module.exports = {
             if (!newTracking) return res.send('cannot create tracking');
             // console.log(newTracking);
 
+            // let trackings = await Tracking.find({
+            //     where:
+            //     {
+            //         or:
+            //             [{ status_id: 4 },
+            //             { status_id: 9 },
+            //             { status_id: 10 },
+            //             { status_id: 49 },
+            //             { status_id: 410 }
+            //             ]
+            //     }
+            // }).catch(e => console.log('error: ' + e));
+            // if(!trackings) trackings = [];
+
+            //  trackings = convert_to_array_json.convert(trackings);
+            const arrData = newTracking.data.split(';');  //mảng string các obj
+            const arr = [];
+            arrData.forEach(a => {
+                let dataJson = JSON.parse(a);
+                dataJson['action_time'] = convert_time.fn(dataJson['action_time']);
+                arr.push(dataJson);
+            })
+
+            newTracking['arrJson'] = arr;
+
+            if (newTracking.handling) {
+                const arrHandling = newTracking.handling.split(';;');
+                newTracking['arrHandling'] = arrHandling;
+            }
+
+             sails.sockets.broadcast('cskh','new-tracking', { newTracking });
             return res.ok();
         }
         if (tracking) {
 
             const updatedTracking = await Tracking.update({ label_id }, { data: tracking.data + ";" + newData }).fetch();
             updatedTracking.status_id = status_id;
-            if (!updatedTracking) console.log('failed to update');
-            // console.log(updatedTracking);
+            if (!updatedTracking) return res.send('failed to update');
+            // console.log(updatedTracking)
 
-            res.ok();
+            const arrData = updatedTracking.data.split(';');  //mảng string các obj
+            const arr = [];
+            arrData.forEach(a => {
+                let dataJson = JSON.parse(a);
+                dataJson['action_time'] = convert_time.fn(dataJson['action_time']);
+                arr.push(dataJson);
+            })
+
+            updatedTracking['arrJson'] = arr;
+
+            if (updatedTracking.handling) {
+                const arrHandling = updatedTracking.handling.split(';;');
+                updatedTracking['arrHandling'] = arrHandling;
+            }
+
+            sails.sockets.broadcast('cskh','update-tracking', { updatedTracking });
+
+            return res.ok();
         }
     },
 
@@ -82,38 +141,14 @@ module.exports = {
                     { status_id: 9 },
                     { status_id: 10 },
                     { status_id: 49 },
-                    { status_id: 410 }
-                    ]
+                    { status_id: 410 }]
             }
         }).catch(e => console.log('error: ' + e));
 
-        if (!trackings) return res.send('tracking empty');
+        if (!trackings) return trackings = [];
 
-
-        console.log(trackings);
-
-
-        trackings.forEach((tracking, index) => {
-            // console.log(tracking);
-            const arrData = tracking.data.split(';');  //mảng string các obj
-
-
-
-            const arr = [];
-            arrData.forEach(a => {
-                let dataJson = JSON.parse(a);
-                dataJson['action_time'] = convert_time.fn(dataJson['action_time']);
-                arr.push(dataJson);
-                // console.log(JSON.parse(a));
-            })
-
-            tracking['arrJson'] = arr;
-
-            if (tracking.handling) {
-                const arrHandling = tracking.handling.split(';;');
-                tracking['arrHandling'] = arrHandling;
-            }
-        })
+        trackings = convert_to_array_json.convert(trackings);
+        
         const me = req.me;
         trackings = trackings.reverse();
         return res.view('admin/delay', { trackings, me, status: ghtk_status_id.STATUS_ID });

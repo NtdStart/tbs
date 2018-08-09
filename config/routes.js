@@ -63,11 +63,11 @@ module.exports.routes = {
   '/logout':                  '/api/v1/account/logout',
 
 
-
+  'POST /api/tracking':       'Tracking.index',
   'GET /admin':                {view:   'admin/index', action: 'Tracking/getAllTrackings', locals: { layout: 'layouts/layout-admin'} },
   'POST   /webhook/ghtk':      'Tracking.GiaoHangTietKiemWebHooks',
-  'GET /tracking':              'Tracking.getAllTrackings',
-  'POST  /handling':             'Tracking.handling' , 
+  'GET /tracking':             'Tracking.getAllTrackings',
+  'POST  /handling':           'Tracking.handling' , 
   'GET /delay':                { action: 'Tracking/getDelay', locals: { layout: 'layouts/layout-admin'} },
 
 
