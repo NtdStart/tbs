@@ -57,11 +57,11 @@ module.exports = {
         }
         if (tracking) {
 
-            const updatedTracking = await Tracking.update({ label_id }, { data: tracking.data + ";" + newData }).fetch();
-            updatedTracking.status_id = status_id;
+            const updatedTracking = await Tracking.updateOne({ label_id }, { data: tracking.data + ";" + newData });
+            
             if (!updatedTracking) return res.send('failed to update');
-            // console.log(updatedTracking)
-
+            console.log(updatedTracking)
+            updatedTracking.status_id = status_id;
             const arrData = updatedTracking.data.split(';');  //mảng string các obj
             const arr = [];
             arrData.forEach(a => {
