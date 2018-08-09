@@ -20,23 +20,7 @@ module.exports = {
         if (!tracking) {
             const newTracking = await Tracking.create({ label_id, data: newData, status_id }).fetch()
             if (!newTracking) return res.send('cannot create tracking');
-            // console.log(newTracking);
-
-            // let trackings = await Tracking.find({
-            //     where:
-            //     {
-            //         or:
-            //             [{ status_id: 4 },
-            //             { status_id: 9 },
-            //             { status_id: 10 },
-            //             { status_id: 49 },
-            //             { status_id: 410 }
-            //             ]
-            //     }
-            // }).catch(e => console.log('error: ' + e));
-            // if(!trackings) trackings = [];
-
-            //  trackings = convert_to_array_json.convert(trackings);
+            newTracking.status_id = status_id;
             const arrData = newTracking.data.split(';');  //mảng string các obj
             const arr = [];
             arrData.forEach(a => {
@@ -47,12 +31,11 @@ module.exports = {
 
             newTracking['arrJson'] = arr;
 
-            if (newTracking.handling) {
-                const arrHandling = newTracking.handling.split(';;');
-                newTracking['arrHandling'] = arrHandling;
-            }
+            newTracking.arrHandling = [];
+            newTracking.status_id = status_id;
+            // console.log(newTracking);
 
-             sails.sockets.broadcast('cskh','new-tracking', { newTracking });
+             sails.sockets.broadcast('cskh','new-tracking',  newTracking );
             return res.ok();
         }
         if (tracking) {
@@ -60,7 +43,7 @@ module.exports = {
             const updatedTracking = await Tracking.updateOne({ label_id }, { data: tracking.data + ";" + newData });
             
             if (!updatedTracking) return res.send('failed to update');
-            console.log(updatedTracking)
+            // console.log(updatedTracking)
             updatedTracking.status_id = status_id;
             const arrData = updatedTracking.data.split(';');  //mảng string các obj
             const arr = [];
@@ -112,6 +95,8 @@ module.exports = {
         });
         const me = req.me;
         trackings = trackings.reverse();
+        console.log(trackings);
+        
         return res.view('admin/index', { trackings, me, status: ghtk_status_id.STATUS_ID, code: ghtk_status_id.REASON_CODE })
     },
     handling: async function (req, res) {

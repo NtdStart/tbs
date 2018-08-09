@@ -4,7 +4,7 @@ module.exports = {
       {'status_id':1,'description': 'Chưa tiếp nhận'},
       {'status_id':2,'description': 'Đã tiếp nhận'},
       {'status_id':3,'description': 'Đã lấy hàng/ Đã nhập kho'},
-      {'status_id':4,'description': 'Đã điều phối giao hàng/ Đã giao hàng'},
+      {'status_id':4,'description': 'Đã điều phối giao hàng/Đang giao hàng'},
       {'status_id':5,'description': 'Đã giao hàng/ Chưa đối soát'},
       {'status_id':6,'description': 'Đã đối soát'},
       {'status_id':7,'description': 'Không lấy được hàng'},

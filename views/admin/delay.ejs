@@ -75,7 +75,7 @@
 </table>
 
 
-<!-- <div id="mylist" >
+ <!-- <div id="mylist" >
    <ul>
     <% trackings.forEach(function(tracking){ %>
         <li>
@@ -108,9 +108,9 @@
             }
         })
     }
-    io.socket.on('new-tracking', function (msg) {
-        console.log(msg)
-        let tracking = msg.newTracking;
+    io.socket.on('new-tracking', function (tracking) {
+        console.log(tracking)
+        
         
         let li = `<li>
             ${tracking.label_id}
@@ -125,18 +125,28 @@
 
         let insert = ` `;
 
-        $('#mylist').before(li)
-        $('#list td:eq(0)').before(insert);
+        const label = tracking.label_id;
+        const status = tracking.status_id;
+        const reason = tracking.arrJson[0].reason;
+        const pickMoney = tracking.arrJson[0].pick_money;
+        const handle = tracking.arrHandling[0];
+
+        $('#list td:eq(0)').before(label);
+        $('#list td:eq(1)').before(status);
+        $('#list td:eq(3)').before(reason);
+        $('#list td:eq(4)').before(pickMoney);
+        $('#list td:eq(5)').before(handle);
     });
 
     io.socket.on('update-tracking', function (msg) {
         console.log(msg)
         let updateTracking = msg.updateTracking;
-
+        
+        
         
        
 
         $("#list").append(li)
     });
-    postMessage();
+    // postMessage();
 </script>
