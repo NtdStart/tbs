@@ -62,7 +62,7 @@
                                                 <input type="text" class="form-control" name="label_id" style="display: none" value="<%= tracking.label_id%>">
                                             </div>
 
-                                            <button class="btn btn-success">Save</button>
+                                            <button class="btn btn-success" id ="save" >Save</button>
                                         </form>
                                     <% } %>
                                                             
@@ -70,6 +70,10 @@
                                 </td>
             </tbody>
             <% })%>
-
+                <script>
+                    $('#save').click(function() {
+                        location.reload(true);
+                    });
                 </script>
+                
     </table>

@@ -36,7 +36,7 @@ module.exports = {
             newTracking.status_id = status_id;
             // console.log(newTracking);
 
-            sails.sockets.broadcast('cskh','new-tracking',  newTracking );
+            sails.sockets.broadcast('cskh','new-tracking', { newTracking, status: ghtk_status_id.STATUS_ID });
             return res.ok();
         }
         if (tracking) {
@@ -61,7 +61,7 @@ module.exports = {
                 updatedTracking['arrHandling'] = arrHandling;
             }
 
-            sails.sockets.broadcast('cskh','update-tracking', updatedTracking );
+            sails.sockets.broadcast('cskh','update-tracking', {updatedTracking, status: ghtk_status_id.STATUS_ID} );
 
             return res.ok();
         }
@@ -71,14 +71,16 @@ module.exports = {
         if (!req.me) {
             return res.redirect('/');
         }
-        let trackings = await Tracking.find({}).catch(e => console.log('error: ' + e));
+        let trackings = await Tracking.find({})
+        .sort('createdAt DESC')
+        .catch(e => console.log('error: ' + e));
         if (!trackings) trackings = [];
         // console.log(trackings);
 
         trackings = convert_to_array_json.convert(trackings);
 
         const me = req.me;
-        trackings = trackings.reverse();
+        // trackings = trackings.reverse();
 
         return res.view('admin/index', { trackings, me, status: ghtk_status_id.STATUS_ID, code: ghtk_status_id.REASON_CODE })
     },
@@ -94,7 +96,7 @@ module.exports = {
         const newTracking = await Tracking.updateOne({ "label_id": label_id }, { handling: tracking.handling ? tracking.handling + ";;" + message + `[${me.fullName}]` : "" + message + `[${me.fullName}]` });
         if (!newTracking) res.send('cannot update tracking');
 
-        return res.redirect('back');
+        return res.redirect('..');
     },
 
     getDelay: async function (req, res) {
@@ -112,14 +114,16 @@ module.exports = {
                     { status_id: 49 },
                     { status_id: 410 }]
             }
-        }).catch(e => console.log('error: ' + e));
+        })
+        .sort('createdAt DESC')
+        .catch(e => console.log('error: ' + e));
 
         if (!trackings) return trackings = [];
 
         trackings = convert_to_array_json.convert(trackings);
         
         const me = req.me;
-        trackings = trackings.reverse();
+        // trackings = trackings.reverse();
         return res.view('admin/delay', { trackings, me, status: ghtk_status_id.STATUS_ID });
     }
 }

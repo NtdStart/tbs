@@ -10,12 +10,12 @@
             <th scope="col">Thông tin xử lý</th>
         </tr>
     </thead>
-    
+
     <div id="divlist">
         <% trackings.forEach(function(tracking, index){ %>
             <tbody id="list">
 
-                <th scope="row" >
+                <th scope="row">
                     <%= index + 1%>
                 </th>
                 <td>
@@ -48,9 +48,6 @@
                                                 <% }) %>
                                 </td>
                                 <td>
-                                    <!-- <span class="input-group-btn">
-                            <button type="button" id="btn" onclick="myFunction()" class="btn btn-default">Xử lý</button>
-                        </span> -->
                                     <% if(tracking.arrHandling){ %>
                                         <% tracking.arrHandling.forEach((h, i) => { %>
                                             Lần
@@ -66,12 +63,18 @@
                                                                     <input type="text" class="form-control" name="label_id" style="display: none" value="<%= tracking.label_id%>">
                                                                 </div>
 
-                                                                <button class="btn btn-success">Save</button>
+                                                                <button class="btn btn-success" id="save">Save</button>
                                                             </form>
 
                                 </td>
             </tbody>
             <% })%>
+
+            <script>
+            $('#save').click(function() {
+                location.reload(true);
+            });
+            </script>
     </div>
 
 
@@ -112,47 +115,61 @@
             }
         })
     }
-    io.socket.on('new-tracking', function (tracking) {
-        console.log(tracking)
+    io.socket.on('new-tracking', function (msg) {
+        console.log(msg);
+        
+        const { newTracking } = msg;
 
-        const label = tracking.label_id;
-        const status = tracking.status_id;
-        const reason = tracking.arrJson[0].reason;
-        const pickMoney = tracking.arrJson[0].pick_money;
-        const handle = tracking.arrHandling ? tracking.arrHandling : "";
+        const tbody = `<tbody>`;
+        const tbodyEnd = `</tbody>`;
+        const th = `<th></th>`;
 
-        let li = `<li>
-            ${label}
-        </li>
-        <ul>` + `<li>
-                    ${status}
-                </li>
-                <li>
-                        ${reason}
-                </li>
-                <li>
-                        ${pickMoney}
-                </li>
-                <li>
-                        ${handle}
-                </li>
-        </ul>`
+        const label = `<td>` + newTracking.label_id + `</td>`;
+            const statusTracking = `<% for(let i = 0; i <` + status.length + `; i++){ %>
+                        <% if( ` + status[i].status_id + `== ` + newTracking.arrJson[  newTracking.arrJson.length - 1].status_id + ` ){ %>
+                            <td>
+                                <%= ` + status[i].description + ` %>
+                            </td>
+                            <% } %>
+                                <% } %>`;
+
+      
+
+        // let li = `<li>
+        //     ${label}
+        // </li>
+        // <ul>` + `<li>
+        //             ${status}
+        //         </li>
+        //         <li>
+        //                 ${reason}
+        //         </li>
+        //         <li>
+        //                 ${pickMoney}
+        //         </li>
+        //         <li>
+        //                 ${handle}
+        //         </li>
+        // </ul>` 
 
         let insert = ` `;
-        $("#divlist tbody:eq(0)").before("<tbody><th>a</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tbody>")
 
-        $("#mylist li:eq(0)").before(li);
+        $("tbody:eq(0)").before(tbody + th + label + status1 +tbodyEnd);
+
+        // $("#mylist li:eq(0)").before(li);
 
     });
 
-    io.socket.on('update-tracking', function (tracking) {
-        console.log(tracking)
+    io.socket.on('update-tracking', function (msg) {
 
-        const label = tracking.label_id;
-        const status = tracking.status_id;
-        const reason = tracking.arrJson[tracking.arrJson.length - 1].reason;
-        const pickMoney = tracking.arrJson[tracking.arrJson.length - 1].pick_money;
-        const handle = tracking.arrHandling ? tracking.arrHandling : "";
+        const { updatedTracking, status } = msg;
+        console.log(updatedTracking)
+
+        const label = updatedTracking.label_id;
+        const status = updatedTracking.status_id;
+        const reason = updatedTracking.arrJson[updatedTracking.arrJson.length - 1].reason;
+        const pickMoney = updatedTracking.arrJson[updatedTracking.arrJson.length - 1].pick_money;
+        const handle = updatedTracking.arrHandling ? updatedTracking.arrHandling : "";
 
         let li = `<li>
             ${label}
