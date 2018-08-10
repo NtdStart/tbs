@@ -11,16 +11,17 @@ module.exports = {
     },
 
     GiaoHangTietKiemWebHooks: async function (req, res) {
-        // sails.log(req.body);
+        sails.log(req.body);
 
-        const { label_id, partner_id, status_id, action_time, reason_code, reason, weight, fee, pick_money } = req.body;
+        let { label_id, partner_id, status_id, action_time, reason_code, reason, weight, fee, pick_money } = req.body;
+        pick_money = convertTypeCurr.fn(pick_money);
+        fee = convertTypeCurr.fn(fee);
         const newData = JSON.stringify({ partner_id, status_id, action_time, reason_code, reason, weight, fee, pick_money })
 
         const tracking = await Tracking.findOne({ 'label_id': label_id }).catch(error => sails.log(error));
         if (!tracking) {
             const newTracking = await Tracking.create({ label_id, data: newData, status_id }).fetch()
             if (!newTracking) return res.send('cannot create tracking');
-            newTracking.status_id = status_id;
             const arrData = newTracking.data.split(';');  //mảng string các obj
             const arr = [];
             arrData.forEach(a => {
@@ -35,7 +36,7 @@ module.exports = {
             newTracking.status_id = status_id;
             // console.log(newTracking);
 
-             sails.sockets.broadcast('cskh','new-tracking',  newTracking );
+            sails.sockets.broadcast('cskh','new-tracking',  newTracking );
             return res.ok();
         }
         if (tracking) {
@@ -60,7 +61,7 @@ module.exports = {
                 updatedTracking['arrHandling'] = arrHandling;
             }
 
-            sails.sockets.broadcast('cskh','update-tracking', { updatedTracking });
+            sails.sockets.broadcast('cskh','update-tracking', updatedTracking );
 
             return res.ok();
         }
@@ -74,31 +75,14 @@ module.exports = {
         if (!trackings) trackings = [];
         // console.log(trackings);
 
-        trackings.forEach((tracking, index) => {
-            // console.log(tracking);
-            const arrData = tracking.data.split(';');  //mảng các string
-            // console.log(arrData);
-            const arr = [];
-            arrData.forEach(a => {
-                let dataJson = JSON.parse(a);
-                dataJson['action_time'] = convert_time.fn(dataJson['action_time']);
-                arr.push(dataJson);
-                // console.log(JSON.parse(a));
-            })
-            tracking['arrJson'] = arr;
+        trackings = convert_to_array_json.convert(trackings);
 
-            if (tracking.handling) {
-                const arrHandling = tracking.handling.split(';;');
-                tracking['arrHandling'] = arrHandling;
-            }
-
-        });
         const me = req.me;
         trackings = trackings.reverse();
-        console.log(trackings);
-        
+
         return res.view('admin/index', { trackings, me, status: ghtk_status_id.STATUS_ID, code: ghtk_status_id.REASON_CODE })
     },
+
     handling: async function (req, res) {
         // const nameUser = req.me.fullName;
         const me = req.me;
@@ -108,9 +92,9 @@ module.exports = {
 
 
         const newTracking = await Tracking.updateOne({ "label_id": label_id }, { handling: tracking.handling ? tracking.handling + ";;" + message + `[${me.fullName}]` : "" + message + `[${me.fullName}]` });
-        if (!newTracking) console.log('cannot update tracking');
+        if (!newTracking) res.send('cannot update tracking');
 
-        return res.redirect('/admin');
+        return res.redirect('back');
     },
 
     getDelay: async function (req, res) {

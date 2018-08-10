@@ -6,57 +6,59 @@
             <th scope="col">Mã vận đơn</th>
             <th scope="col">Trạng thái</th>
             <th scope="col">Lý do</th>
-            <th scope="col">Pick_money</th>
+            <th scope="col">Tiền thu hộ</th>
             <th scope="col">Thông tin xử lý</th>
         </tr>
     </thead>
+    
+    <div id="divlist">
+        <% trackings.forEach(function(tracking, index){ %>
+            <tbody id="list">
 
-    <% trackings.forEach(function(tracking, index){ %>
-        <tbody id="list">
-            <th scope="row" >
-                <%= index + 1%>
-            </th>
-            <td>
-                <%=tracking.label_id%>
-            </td>
+                <th scope="row" >
+                    <%= index + 1%>
+                </th>
+                <td>
+                    <%=tracking.label_id%>
+                </td>
 
-            <% for(let i = 0; i < status.length; i++){ %>
-                <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
-                    <td>
-                        <%= status[i].description %>
-                    </td>
-                    <% } %>
+                <% for(let i = 0; i < status.length; i++){ %>
+                    <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
+                        <td>
+                            <%= status[i].description %>
+                        </td>
                         <% } %>
+                            <% } %>
 
-                            <td style="color:red">
-                                <% tracking.arrJson.forEach((arr, i) => { %>
-                                    Lần
-                                    <%= i + 1%>:
-                                        <%= arr.reason %>. Thời gian:
-                                            <%= arr.action_time %>
-                                                <br />
-                                                <% }) %>
-                            </td>
-                            <td>
-                                <% tracking.arrJson.forEach((arr, i) => { %>
-                                    Lần
-                                    <%= i + 1%>:
-                                        <%= arr.pick_money %>
-                                            <br />
-                                            <% }) %>
-                            </td>
-                            <td>
-                                <!-- <span class="input-group-btn">
-                            <button type="button" id="btn" onclick="myFunction()" class="btn btn-default">Xử lý</button>
-                        </span> -->
-                                <% if(tracking.arrHandling){ %>
-                                    <% tracking.arrHandling.forEach((h, i) => { %>
+                                <td style="color:red">
+                                    <% tracking.arrJson.forEach((arr, i) => { %>
                                         Lần
                                         <%= i + 1%>:
-                                            <%= h %>
+                                            <%= arr.reason %>. Thời gian:
+                                                <%= arr.action_time %>
+                                                    <br />
+                                                    <% }) %>
+                                </td>
+                                <td>
+                                    <% tracking.arrJson.forEach((arr, i) => { %>
+                                        Lần
+                                        <%= i + 1%>:
+                                            <%= arr.pick_money %>
                                                 <br />
                                                 <% }) %>
-                                                    <% } %>
+                                </td>
+                                <td>
+                                    <!-- <span class="input-group-btn">
+                            <button type="button" id="btn" onclick="myFunction()" class="btn btn-default">Xử lý</button>
+                        </span> -->
+                                    <% if(tracking.arrHandling){ %>
+                                        <% tracking.arrHandling.forEach((h, i) => { %>
+                                            Lần
+                                            <%= i + 1%>:
+                                                <%= h %>
+                                                    <br />
+                                                    <% }) %>
+                                                        <% } %>
 
                                                             <form action="handling" method="post" class="form-group">
                                                                 <div class="form-group">
@@ -65,35 +67,37 @@
                                                                 </div>
 
                                                                 <button class="btn btn-success">Save</button>
-                                                            </form>                                                           
+                                                            </form>
 
-                            </td>
-        </tbody>
-        <% })%>
+                                </td>
+            </tbody>
+            <% })%>
+    </div>
 
-            </script>
+
+    </script>
 </table>
 
 
- <!-- <div id="mylist" >
-   <ul>
-    <% trackings.forEach(function(tracking){ %>
-        <li>
-            <%=tracking.label_id%>
-        </li>
-        <ul data-id="<%=tracking.status_id%>">
-            <% tracking.arrJson.map((a)=>{ %>
-                <li>
-                    <%=a.reason  %>
-                </li>
-                <li>
+<div id="mylist">
+    <ul>
+        <% trackings.forEach(function(tracking){ %>
+            <li>
+                <%=tracking.label_id%>
+            </li>
+            <ul data-id="<%=tracking.status_id%>">
+                <% tracking.arrJson.map((a)=>{ %>
+                    <li>
+                        <%=a.reason  %>
+                    </li>
+                    <li>
                         <%=a.pick_money  %>
-                </li>
-                <%})%>
-        </ul>
-        <% })%>
-    </ul> 
-</div> -->
+                    </li>
+                    <%})%>
+            </ul>
+            <% })%>
+    </ul>
+</div>
 
 
 <script>
@@ -110,43 +114,64 @@
     }
     io.socket.on('new-tracking', function (tracking) {
         console.log(tracking)
-        
-        
-        let li = `<li>
-            ${tracking.label_id}
-        </li>
-        <ul>` + `<li>
-                    ${tracking.arrJson[0].reason}
-                </li>
-                <li>
-                        ${tracking.arrJson[0].pick_money}
-                </li>
-        </ul>`
-
-        let insert = ` `;
 
         const label = tracking.label_id;
         const status = tracking.status_id;
         const reason = tracking.arrJson[0].reason;
         const pickMoney = tracking.arrJson[0].pick_money;
-        const handle = tracking.arrHandling[0];
+        const handle = tracking.arrHandling ? tracking.arrHandling : "";
 
-        $('#list td:eq(0)').before(label);
-        $('#list td:eq(1)').before(status);
-        $('#list td:eq(3)').before(reason);
-        $('#list td:eq(4)').before(pickMoney);
-        $('#list td:eq(5)').before(handle);
+        let li = `<li>
+            ${label}
+        </li>
+        <ul>` + `<li>
+                    ${status}
+                </li>
+                <li>
+                        ${reason}
+                </li>
+                <li>
+                        ${pickMoney}
+                </li>
+                <li>
+                        ${handle}
+                </li>
+        </ul>`
+
+        let insert = ` `;
+        $("#divlist tbody:eq(0)").before("<tbody><th>a</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tbody>")
+
+        $("#mylist li:eq(0)").before(li);
+
     });
 
-    io.socket.on('update-tracking', function (msg) {
-        console.log(msg)
-        let updateTracking = msg.updateTracking;
-        
-        
-        
-       
+    io.socket.on('update-tracking', function (tracking) {
+        console.log(tracking)
 
-        $("#list").append(li)
+        const label = tracking.label_id;
+        const status = tracking.status_id;
+        const reason = tracking.arrJson[tracking.arrJson.length - 1].reason;
+        const pickMoney = tracking.arrJson[tracking.arrJson.length - 1].pick_money;
+        const handle = tracking.arrHandling ? tracking.arrHandling : "";
+
+        let li = `<li>
+            ${label}
+        </li>
+        <ul>` + `<li>
+                    ${status}
+                </li>
+                <li>
+                        ${reason}
+                </li>
+                <li>
+                        ${pickMoney}
+                </li>
+                <li>
+                        ${handle}
+                </li>
+        </ul>`
+
+        $("#mylist li:eq(0)").before(li);
     });
-    // postMessage();
+    postMessage();
 </script>
