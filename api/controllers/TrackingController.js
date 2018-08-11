@@ -3,6 +3,8 @@ module.exports = {
     index: async function (req, res) {
         if(!req.isSocket) return res.badRequest()
         var socketId = sails.sockets.getId(req)
+
+        
         sails.log('My socket ID is: ' + socketId)
         sails.sockets.join(req,'cskh', function(err) {
         if (err) {return res.serverError(err);}
@@ -19,6 +21,7 @@ module.exports = {
         const newData = JSON.stringify({ partner_id, status_id, action_time, reason_code, reason, weight, fee, pick_money })
 
         const tracking = await Tracking.findOne({ 'label_id': label_id }).catch(error => sails.log(error));
+
         if (!tracking) {
             const newTracking = await Tracking.create({ label_id, data: newData, status_id }).fetch()
             if (!newTracking) return res.send('cannot create tracking');
@@ -34,11 +37,27 @@ module.exports = {
 
             newTracking.arrHandling = [];
             newTracking.status_id = status_id;
+
+            
+            for(let i = 0; i < ghtk_status_id.STATUS_ID.length; i++){ 
+                if(ghtk_status_id.STATUS_ID[i].status_id == newTracking.arrJson[newTracking.arrJson.length - 1].status_id ){ 
+                    newTracking.status_info = ghtk_status_id.STATUS_ID[i].description;
+                } 
+            }
             // console.log(newTracking);
 
-            sails.sockets.broadcast('cskh','new-tracking', { newTracking, status: ghtk_status_id.STATUS_ID });
+            let newDelayTracking;
+
+            if(newTracking.status_id == 4 || newTracking.status_id == 9 || newTracking.status_id == 10 || newTracking.status_id == 49 ||newTracking.status_id == 410 ){
+                newDelayTracking = newTracking;
+                sails.sockets.broadcast('cskh','new-tracking', { newDelayTracking, newTracking, status: ghtk_status_id.STATUS_ID });
+                
+            }else{
+                sails.sockets.broadcast('cskh','new-tracking', { newTracking, status: ghtk_status_id.STATUS_ID })
+            } 
             return res.ok();
         }
+
         if (tracking) {
 
             const updatedTracking = await Tracking.updateOne({ label_id }, { data: tracking.data + ";" + newData });
@@ -75,8 +94,6 @@ module.exports = {
         .sort('createdAt DESC')
         .catch(e => console.log('error: ' + e));
         if (!trackings) trackings = [];
-        // console.log(trackings);
-
         trackings = convert_to_array_json.convert(trackings);
 
         const me = req.me;
@@ -88,15 +105,23 @@ module.exports = {
     handling: async function (req, res) {
         // const nameUser = req.me.fullName;
         const me = req.me;
-        const { message, label_id } = req.body;
+        
+        
+        const { messageSocket, message, label_id } = req.body;
+
         const tracking = await Tracking.findOne({ "label_id": label_id }).catch(error => sails.log(error));
         if (!tracking) tracking = {};
 
+        const updatedTracking = await Tracking.updateOne({ "label_id": label_id }, { handling: tracking.handling ? tracking.handling + ";;" + messageSocket + `[${me.fullName}]` : "" + messageSocket + `[${me.fullName}]` });
+        if (!updatedTracking) res.send('cannot update tracking');
 
-        const newTracking = await Tracking.updateOne({ "label_id": label_id }, { handling: tracking.handling ? tracking.handling + ";;" + message + `[${me.fullName}]` : "" + message + `[${me.fullName}]` });
-        if (!newTracking) res.send('cannot update tracking');
+        if (updatedTracking.handling) {
+            const arrHandling = updatedTracking.handling.split(';;');
+            updatedTracking['arrHandling'] = arrHandling;
+        }
 
-        return res.redirect('..');
+        sails.sockets.broadcast('cskh','server-send-Message', { updatedTracking } );
+        return res.redirect("..");
     },
 
     getDelay: async function (req, res) {

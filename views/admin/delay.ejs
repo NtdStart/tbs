@@ -1,8 +1,13 @@
-<h3>Đơn hàng delay</h3>
+<h2 style="color:black">Đơn hàng delay</h2>
+<div>
+    <h4 id="total">Tổng:
+        <%= trackings.length %>
+    </h4>
+</div>
 <table class="table">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">#</th>
+            <!-- <th scope="col">#</th> -->
             <th scope="col">Mã vận đơn</th>
             <th scope="col">Trạng thái</th>
             <th scope="col">Lý do</th>
@@ -15,99 +20,64 @@
         <% trackings.forEach(function(tracking, index){ %>
             <tbody id="list">
 
-                <th scope="row">
-                    <%= index + 1%>
-                </th>
                 <td>
                     <%=tracking.label_id%>
                 </td>
 
                 <% for(let i = 0; i < status.length; i++){ %>
                     <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
-                        <td>
+                        <td id="status<%=tracking.label_id%>">
                             <%= status[i].description %>
                         </td>
                         <% } %>
                             <% } %>
 
-                                <td style="color:red">
+                                <td style="color:red" id="reason<%=tracking.label_id%>">
                                     <% tracking.arrJson.forEach((arr, i) => { %>
-                                        Lần
-                                        <%= i + 1%>:
-                                            <%= arr.reason %>. Thời gian:
-                                                <%= arr.action_time %>
-                                                    <br />
-                                                    <% }) %>
-                                </td>
-                                <td>
-                                    <% tracking.arrJson.forEach((arr, i) => { %>
-                                        Lần
-                                        <%= i + 1%>:
-                                            <%= arr.pick_money %>
+                                        <span style="color:blue">Lần
+                                            <%= i + 1%>:</span>
+
+                                        <%= arr.reason %>. 
+                                        <span  style='color:blue'><%= arr.action_time %><span>
+                                            
                                                 <br />
                                                 <% }) %>
                                 </td>
-                                <td>
-                                    <% if(tracking.arrHandling){ %>
-                                        <% tracking.arrHandling.forEach((h, i) => { %>
-                                            Lần
-                                            <%= i + 1%>:
-                                                <%= h %>
+                                <td id="pickMoney<%=tracking.label_id%>">
+                                    <% tracking.arrJson.forEach((arr, i) => { %>
+                                        <span style="color:blue">Lần
+                                            <%= i + 1%>:</span>
+                                        <%= arr.pick_money %>
+                                            <br />
+                                            <% }) %>
+                                </td>
+                                <td >
+                                    <div id=<%= tracking.label_id %> >
+                                        <% if(tracking.arrHandling){ %>
+                                            <% tracking.arrHandling.forEach((h, i) => { %>
+                                                <span style="color:blue">Lần <%= i + 1 %>: </span>
+                                                    <%= h %>
                                                     <br />
-                                                    <% }) %>
-                                                        <% } %>
-
-                                                            <form action="handling" method="post" class="form-group">
-                                                                <div class="form-group">
-                                                                    <input type="text" class="form-control" name="message">
-                                                                    <input type="text" class="form-control" name="label_id" style="display: none" value="<%= tracking.label_id%>">
-                                                                </div>
-
-                                                                <button class="btn btn-success" id="save">Save</button>
-                                                            </form>
-
+                                            <% }) %>
+                                        <% } %>
+                                    </div>
+                                        <input type="text" class="a" name="message" id="handling<%= tracking.label_id %>"   >
+                                        <button class="btn btn-success" value=<%= tracking.label_id %> onclick="saveMessage(this.value)" >Save</button>                                                 
                                 </td>
             </tbody>
             <% })%>
 
-            <script>
-            $('#save').click(function() {
-                location.reload(true);
-            });
-            </script>
     </div>
 
 
-    </script>
+
 </table>
-
-
-<div id="mylist">
-    <ul>
-        <% trackings.forEach(function(tracking){ %>
-            <li>
-                <%=tracking.label_id%>
-            </li>
-            <ul data-id="<%=tracking.status_id%>">
-                <% tracking.arrJson.map((a)=>{ %>
-                    <li>
-                        <%=a.reason  %>
-                    </li>
-                    <li>
-                        <%=a.pick_money  %>
-                    </li>
-                    <%})%>
-            </ul>
-            <% })%>
-    </ul>
-</div>
-
 
 <script>
     var objstatus = JSON.stringify(status);
 
     function postMessage() {
-        io.socket.post('/api/tracking', { message: 'abc' }, function (resData, jwRes) {
+        io.socket.post('/api/tracking', { message: 'thông điệp' }, function (resData, jwRes) {
             if (jwRes.statusCode != 200) {
                 console.log('bad req')
             } else {
@@ -115,50 +85,73 @@
             }
         })
     }
-    io.socket.on('new-tracking', function (msg) {
+
+    function saveMessage(label_id) {
+
+            const messageSocket = document.getElementById("handling" + label_id).value
+            document.getElementById("handling" + label_id).value = "";
+            io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
+        });
+    }
+
+
+    io.socket.on('server-send-Message', function (msg) {
         console.log(msg);
-        
-        const { newTracking } = msg;
+        const { updatedTracking } = msg;
+
+        // alert(document.getElementById(updatedTracking.label_id).innerHTML);
+
+        let handling = "";
+
+        updatedTracking.arrHandling.forEach((h, i) => {
+            handling += "<span style='color:blue'>Lần " + ++i + ": </span>" + h + "<br />";
+        })
+        const hand = ` <div id=${updatedTracking.label_id}> ${handling} </div> `;
+
+        document.getElementById(updatedTracking.label_id).innerHTML = hand;
+
+    })
+
+    io.socket.on('new-tracking', function (msg) {
+        // console.log(msg);
+
+        const { newDelayTracking } = msg;
+
+        console.log(msg);
+        console.log(newDelayTracking);
+
 
         const tbody = `<tbody>`;
         const tbodyEnd = `</tbody>`;
-        const th = `<th></th>`;
+        const label = `<td>${newDelayTracking.label_id}</td>`
+        const statusInfo = "<td>" + newDelayTracking.status_info + "</td>";
 
-        const label = `<td>` + newTracking.label_id + `</td>`;
-            const statusTracking = `<% for(let i = 0; i <` + status.length + `; i++){ %>
-                        <% if( ` + status[i].status_id + `== ` + newTracking.arrJson[  newTracking.arrJson.length - 1].status_id + ` ){ %>
-                            <td>
-                                <%= ` + status[i].description + ` %>
-                            </td>
-                            <% } %>
-                                <% } %>`;
+        let reason = "";
+        newDelayTracking.arrJson.forEach((e, i) => {
+            reason += "<span style='color:blue'>Lần " + ++i + ": </span>" + e.reason + "<span  style='color:blue'> (" + e.action_time + ")<span>" + "<br />";
+        })
+        reason = "<td style='color:red'>" + reason + "</td>";
 
-      
+        let pickMoney = "";
+        newDelayTracking.arrJson.forEach((e, i) => {
+            pickMoney += "<span style='color:blue'>Lần " + ++i + ": </span>" + "<span>" + e.pick_money + "</span>";
+        })
+        pickMoney = "<td>" + pickMoney + "</td>";
 
-        // let li = `<li>
-        //     ${label}
-        // </li>
-        // <ul>` + `<li>
-        //             ${status}
-        //         </li>
-        //         <li>
-        //                 ${reason}
-        //         </li>
-        //         <li>
-        //                 ${pickMoney}
-        //         </li>
-        //         <li>
-        //                 ${handle}
-        //         </li>
-        // </ul>` 
+        const handle = `<td>    
+                            <div id=${newDelayTracking.label_id} ></div> 
+                            <input type="text" name="message" id="txtMessage">
+                            <input type="text" name="label_id" id="label_id" style="display: none" value=${newDelayTracking.label_id}>
+                       
+                            <button class="btn btn-success" id="btnSave">Save</button>
+                        </td>`;
 
-        let insert = ` `;
+        $("tbody:eq(0)").before(tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd);
 
-        $("tbody:eq(0)").before(tbody + th + label + status1 +tbodyEnd);
-
-        // $("#mylist li:eq(0)").before(li);
-
+        const n = $("tbody").length;
+        $("h4").text("Tổng: " + n);
     });
+
 
     io.socket.on('update-tracking', function (msg) {
 
@@ -166,29 +159,34 @@
         console.log(updatedTracking)
 
         const label = updatedTracking.label_id;
-        const status = updatedTracking.status_id;
-        const reason = updatedTracking.arrJson[updatedTracking.arrJson.length - 1].reason;
-        const pickMoney = updatedTracking.arrJson[updatedTracking.arrJson.length - 1].pick_money;
         const handle = updatedTracking.arrHandling ? updatedTracking.arrHandling : "";
 
-        let li = `<li>
-            ${label}
-        </li>
-        <ul>` + `<li>
-                    ${status}
-                </li>
-                <li>
-                        ${reason}
-                </li>
-                <li>
-                        ${pickMoney}
-                </li>
-                <li>
-                        ${handle}
-                </li>
-        </ul>`
+        let statusInfo = "";
 
-        $("#mylist li:eq(0)").before(li);
+        for (let i = 0; i < status.length; i++) {
+            if (status[i].status_id == updatedTracking.arrJson[updatedTracking.arrJson.length - 1].status_id) {
+                statusInfo = status[i].description;
+            }
+        }
+
+
+        let reason = "";
+        updatedTracking.arrJson.forEach((e, i) => {
+            reason += "<span style='color:blue'>Lần " + ++i + ": </span>" + e.reason + "<span  style='color:blue'> (" + e.action_time + ")<span>" + "<br />";
+        })
+        reason = "<td style='color:red'>" + reason + "</td>";
+
+
+        let pickMoney = "";
+        updatedTracking.arrJson.forEach((e, i) => {
+            pickMoney += "<span style='color:blue'>Lần " + ++i + ": </span>" + "<span>" + e.pick_money + "</span>" + "<br />";
+        })
+        pickMoney = "<td>" + pickMoney + "</td>";
+
+
+        document.getElementById("status"+updatedTracking.label_id).innerHTML = statusInfo;
+        document.getElementById("reason"+updatedTracking.label_id).innerHTML = reason;
+        document.getElementById("pickMoney"+updatedTracking.label_id).innerHTML = pickMoney;
     });
     postMessage();
 </script>
