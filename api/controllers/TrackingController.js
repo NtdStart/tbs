@@ -23,7 +23,7 @@ module.exports = {
         const tracking = await Tracking.findOne({ 'label_id': label_id }).catch(error => sails.log(error));
 
         if (!tracking) {
-            const newTracking = await Tracking.create({ label_id, data: newData, status_id }).fetch()
+            const newTracking = await Tracking.create({ label_id, data: newData, status_id, reason }).fetch()
             if (!newTracking) return res.send('cannot create tracking');
             const arrData = newTracking.data.split(';');  //mảng string các obj
             const arr = [];
@@ -34,7 +34,6 @@ module.exports = {
             })
 
             newTracking['arrJson'] = arr;
-
             newTracking.arrHandling = [];
             newTracking.status_id = status_id;
 
@@ -44,23 +43,25 @@ module.exports = {
                     newTracking.status_info = ghtk_status_id.STATUS_ID[i].description;
                 } 
             }
-            // console.log(newTracking);
+            console.log(newTracking);
 
             let newDelayTracking;
 
-            if(newTracking.status_id == 4 || newTracking.status_id == 9 || newTracking.status_id == 10 || newTracking.status_id == 49 ||newTracking.status_id == 410 ){
+
+            if(newTracking.status_id == "4" && newTracking.arrJson[0].reason != '' || newTracking.status_id == "9" || newTracking.status_id == "10" || newTracking.status_id == "49" ||newTracking.status_id == "410" ){
                 newDelayTracking = newTracking;
                 sails.sockets.broadcast('cskh','new-tracking', { newDelayTracking, newTracking, status: ghtk_status_id.STATUS_ID });
                 
             }else{
                 sails.sockets.broadcast('cskh','new-tracking', { newTracking, status: ghtk_status_id.STATUS_ID })
             } 
+                   
             return res.ok();
         }
 
         if (tracking) {
 
-            const updatedTracking = await Tracking.updateOne({ label_id }, { data: tracking.data + ";" + newData });
+            const updatedTracking = await Tracking.updateOne({ label_id }, { data: tracking.data + ";" + newData, reason });
             
             if (!updatedTracking) return res.send('failed to update');
             // console.log(updatedTracking)
@@ -73,13 +74,21 @@ module.exports = {
                 arr.push(dataJson);
             })
 
+            updatedTracking.reason = reason;
             updatedTracking['arrJson'] = arr;
-
+            // updatedTracking['reason'] = updatedTracking['arrJson'][0].reason;
             if (updatedTracking.handling) {
                 const arrHandling = updatedTracking.handling.split(';;');
                 updatedTracking['arrHandling'] = arrHandling;
             }
 
+            for(let i = 0; i < ghtk_status_id.STATUS_ID.length; i++){ 
+                if(ghtk_status_id.STATUS_ID[i].status_id == updatedTracking.arrJson[updatedTracking.arrJson.length - 1].status_id ){ 
+                    updatedTracking.status_info = ghtk_status_id.STATUS_ID[i].description;
+                } 
+            }
+            console.log(updatedTracking);
+            
             sails.sockets.broadcast('cskh','update-tracking', {updatedTracking, status: ghtk_status_id.STATUS_ID} );
 
             return res.ok();
@@ -133,15 +142,21 @@ module.exports = {
             where:
             {
                 or:
-                    [{ status_id: 4 },
-                    { status_id: 9 },
-                    { status_id: 10 },
-                    { status_id: 49 },
-                    { status_id: 410 }]
+                    [ {
+                        
+                           status_id: 4, 
+                           reason: { '!=': ''} 
+                        
+                      },
+                    { status_id: "9" },
+                    { status_id: "10" },
+                    { status_id: "49" },
+                    { status_id: "410" }]
             }
         })
-        .sort('createdAt DESC')
-        .catch(e => console.log('error: ' + e));
+        .sort('updatedAt DESC')
+        .catch(e => res.send('error: ' + e));
+
 
         if (!trackings) return trackings = [];
 
