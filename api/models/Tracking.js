@@ -21,6 +21,7 @@ module.exports = {
         // fee: {type:'number'},
         status_id: {type:'number'},
         handling: { type: 'string'},
-        reason: { type: 'string'}  
+        reason: { type: 'string'},
+        isHandled: { type: 'boolean' }
     },
   };

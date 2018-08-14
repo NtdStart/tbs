@@ -95,7 +95,6 @@
       });
     
     </script>
-
     <!-- @App Content -->
     <!-- =================================================== -->
     <div>
@@ -182,58 +181,57 @@
             </ul>
             <ul class="nav-right">
               <li class="notifications dropdown">
-                <span class="counter bgc-red">3 </span>
+                <span class="counter bgc-red" id="amount"><%= notHandledDelay.length %></span>
                 <a href="" class="dropdown-toggle no-after" data-toggle="dropdown">
-                  <i class="ti-bell"></i>
+                  <i class="ti-bell"> Delay</i>
                 </a>
 
                 <ul class="dropdown-menu">
-                  <li class="pX-20 pY-15 bdB">
+                  <li class="pX-20 pY-25s bdB">
                     <i class="ti-bell pR-10"></i>
                     <span class="fsz-sm fw-600 c-grey-900">Notifications</span>
                   </li>
+                  <div id="delay">
+                      <% notHandledDelay.forEach((e, i) => { %>
+                        <li class="pX-20 pY-25s bdB">
+                            <div id="show"   class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
+                                <span>
+                                  <span style="color:red">[Delay]</span>
+                                  <span class="fw-500"><%= e.label_id %></span>. Lý do:
+                                  <span style="color:red"><%= e.reason %> </span>
+                                  <br />
+                                  <button type="button"  value=<%= e.label_id %> onclick="sendIndex(this.value)" class="btn btn-primary">Xem</button>
+                             </span>
+                            </div>
+                        </li>
+                        
+                      <% }) %>
+                  </div>
+                  
                   <li>
                     <ul class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
                       <li>
-                        <a href="" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
-                          <div class="peer mR-15">
+                        <a href="" id="show" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
+                          <!-- <div class="peer mR-15">
                             <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/1.jpg" alt="">
-                          </div>
+                          </div> -->
                           <div class="peer peer-greed">
-                            <span>
+                            <!-- <span>
                               <span class="fw-500">John Doe</span>
                               <span class="c-grey-600">liked your <span class="text-dark">post</span>
                             </span>
+                          </span> -->
+                        </a>                
+                            
                 <!-- ### $Sidebar Menu ### -->
                 <ul class="sidebar-menu scrollable pos-r">
                     <li class="nav-item mT-30 active">
                         <a class="sidebar-link" href="/admin">
-                            <span class="icon-holder">
-                                <i class="c-blue-500 ti-home"></i>
-                            </span>
-                            <p class="m-0">
-                              <small class="fsz-xs">5 mins ago</small>
-                            </p>
+                            
                           </div>
                         </a>
                       </li>
-                      <li>
-                        <a href="" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
-                          <div class="peer mR-15">
-                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/2.jpg" alt="">
-                          </div>
-                          <div class="peer peer-greed">
-                            <span>
-                              <span class="fw-500">Moo Doe</span>
-                              <span class="c-grey-600">liked your <span class="text-dark">cover image</span>
-                              </span>
-                            </span>
-                            <p class="m-0">
-                              <small class="fsz-xs">7 mins ago</small>
-                            </p>
-                          </div>
-                        </a>
-                      </li>
+                      
                       <li>
                         <a href="" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
                           <div class="peer mR-15">
@@ -260,94 +258,7 @@
                   </li>
                 </ul>
               </li>
-              <li class="notifications dropdown">
-                <span class="counter bgc-blue">3</span>
-                <a href="" class="dropdown-toggle no-after" data-toggle="dropdown">
-                  <i class="ti-email"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                  <li class="pX-20 pY-15 bdB">
-                    <i class="ti-email pR-10"></i>
-                    <span class="fsz-sm fw-600 c-grey-900">Emails</span>
-                  </li>
-                  <li>
-                    <ul class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
-                      <li>
-                        <a href="" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
-                          <div class="peer mR-15">
-                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/1.jpg" alt="">
-                          </div>
-                          <div class="peer peer-greed">
-                            <div>
-                              <div class="peers jc-sb fxw-nw mB-5">
-                                <div class="peer">
-                                  <p class="fw-500 mB-0">John Doe</p>
-                                </div>
-                                <div class="peer">
-                                  <small class="fsz-xs">5 mins ago</small>
-                                </div>
-                              </div>
-                              <span class="c-grey-600 fsz-sm">
-                                Want to create your own customized data generator for your app...
-                              </span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
-                          <div class="peer mR-15">
-                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/2.jpg" alt="">
-                          </div>
-                          <div class="peer peer-greed">
-                            <div>
-                              <div class="peers jc-sb fxw-nw mB-5">
-                                <div class="peer">
-                                  <p class="fw-500 mB-0">Moo Doe</p>
-                                </div>
-                                <div class="peer">
-                                  <small class="fsz-xs">15 mins ago</small>
-                                </div>
-                              </div>
-                              <span class="c-grey-600 fsz-sm">
-                                Want to create your own customized data generator for your app...
-                              </span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
-                          <div class="peer mR-15">
-                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/3.jpg" alt="">
-                          </div>
-                          <div class="peer peer-greed">
-                            <div>
-                              <div class="peers jc-sb fxw-nw mB-5">
-                                <div class="peer">
-                                  <p class="fw-500 mB-0">Lee Doe</p>
-                                </div>
-                                <div class="peer">
-                                  <small class="fsz-xs">25 mins ago</small>
-                                </div>
-                              </div>
-                              <span class="c-grey-600 fsz-sm">
-                                Want to create your own customized data generator for your app...
-                              </span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li class="pX-20 pY-15 ta-c bdT">
-                    <span>
-                      <a href="email.html" class="c-grey-600 cH-blue fsz-sm td-n">View All Email <i class="fs-xs ti-angle-right mL-10"></i></a>
-                    </span>
-                  </li>
-                </ul>
-              </li>
+              
               <li class="dropdown">
                 <a href="" class="dropdown-toggle no-after peers fxw-nw ai-c lh-1" data-toggle="dropdown">
                   <div class="peer mR-10">
@@ -391,7 +302,14 @@
 
         <!-- ### $App Screen Content ### -->
         <main class="main-content bgc-grey-100">
-         <%- body -%>
+          
+          <div id="body">
+              <%- body -%>
+          </div>
+          <tbody></tbody>
+          <div id="hand">
+
+            </div>
         </main>
 
         <!-- ### $App Screen Footer ### -->
@@ -400,8 +318,8 @@
         </footer>
       </div>
     </div>
-    <script>
-    </script>
+
+   
     <!--SCRIPTS-->
     <script src="/dependencies/vendor.js"></script>
     <script src="/dependencies/bundle.js"></script>
@@ -433,5 +351,127 @@
     <script src="/js/pages/legal/privacy.page.js"></script>
     <script src="/js/pages/legal/terms.page.js"></script>
     <!--SCRIPTS END-->
+
+    <script>
+     
+      function postMessage() {
+        io.socket.post('/api/tracking', { message: 'thông điệp' }, function (resData, jwRes) {
+            if (jwRes.statusCode != 200) {
+                console.log('bad req')
+            } else {
+                console.log('good req')
+            }
+        })
+      }
+
+      io.socket.on('server-send-delay-not-handle', function (msg) {
+        // console.log(msg);
+
+        const { notHandledDelay, newDelayTracking, updatedTracking, handledDelay } = msg;    
+        
+  
+        if( newDelayTracking &&  notHandledDelay || updatedTracking &&  notHandledDelay ){   
+          const amount = notHandledDelay.length;
+          document.getElementById("amount").innerHTML = amount;
+  
+         const newUnhandled = `<li class="pX-20 pY-25s bdB" >
+                            <a href="" id="show" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
+                                <span>
+                                  <span style="color:red">[Delay]</span>
+                                  <span class="fw-500">${ newDelayTracking.label_id || updatedTracking.label_id}</span>. Lý do:
+                                  <span style="color:red">${ newDelayTracking.reason || updatedTracking.reason} </span>
+                                  <br />
+                                  <button type="button"  value=${ newDelayTracking.label_id || updatedTracking.label_id} onclick="sendIndex(this.value)" class="btn btn-primary">Xem</button>
+                             </span>
+                            </a>
+                        </li>`
+          if(handledDelay){
+          const amount = notHandledDelay.length -1;
+          document.getElementById("amount").innerHTML = amount;
+        }
+
+        $("#delay").prepend(newUnhandled);
+                      }
+      })
+
+      function sendIndex(id) {
+        io.socket.post('/unhandle', {id}, function (body, response) {
+        });
+      }
+
+      
+
+      io.socket.on('server-send-an-unhandle', function(msg){
+        const { unhandle } = msg;
+
+        const head = `<div id="delay" >
+        <table class="table" id="tab">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Mã vận đơn</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Lý do</th>
+                    <th scope="col">Tiền thu hộ</th>
+                    <th scope="col">Thông tin xử lý</th>
+                </tr>
+            </thead>
+            
+        `
+        let id = unhandle.label_id;
+        const tbody = `<tbody id="tbody${id}">`; 
+        const tbodyEnd = `</tbody>`;
+        const label = `<td>${unhandle.label_id}</td>`;
+        const statusInfo = "<td>" + unhandle.status_info + "</td>";
+
+        let reason = "";
+    
+        unhandle.arrJson.forEach((e, i) => {
+            reason += "<span style='color:blue'>Lần " + ++i + ": </span><span style='color:red'>" + e.reason + "</span><span  style='color:blue'> (" + e.action_time + ")<span><br />";
+        })
+
+        reason = "<td style='color:red'>" + reason + "</td>";
+
+        let pickMoney = "<td style=''colorLred'><span style='color:blue'>Lần " + 1 + ": </span><span style='color:red'>"+ unhandle.arrJson[0].pick_money + "</span></td>";
+ 
+
+        const handle = `<td>    
+                            <div id='${unhandle.label_id}' ></div> 
+                            <input type="text" name="message" id="handling${unhandle.label_id}">                   
+                            <button class="btn btn-success" value=${unhandle.label_id} onclick="saveMessage(this.value)" >Save</button>
+                        </td>`;
+   
+           $("#body").remove();
+          document.getElementById("hand").innerHTML = head + tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd + `</table>`;
+      }),
+
+      function saveMessage(label_id) {
+
+          const messageSocket = document.getElementById("handling" + label_id).value
+          document.getElementById("handling" + label_id).value = "";
+          io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
+        });
+      } ,
+
+      io.socket.on('server-send-Message', function (msg) {
+        console.log(msg);
+        const { updatedTracking } = msg;
+
+        // alert(document.getElementById(updatedTracking.label_id).innerHTML);
+
+        let handling = "";
+
+        updatedTracking.arrHandling.forEach((h, i) => {
+            handling += "<span style='color:blue'>Lần " + ++i + ": </span>" + h + "<br />";
+        })
+        const hand = ` <div id=${updatedTracking.label_id0}> ${handling} </div> `;
+
+        document.getElementById(updatedTracking.label_id).innerHTML = hand;
+
+    })
+
+     
+      postMessage();
+
+    </script>
   </body>
 </html>

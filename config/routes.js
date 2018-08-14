@@ -68,7 +68,7 @@ module.exports.routes = {
   'POST   /webhook/ghtk':      'Tracking.GiaoHangTietKiemWebHooks',
   'GET /tracking':             'Tracking.getAllTrackings',
   'POST  /handling':           'Tracking.handling' , 
-  'GET /delay':                { action: 'Tracking/getDelay', locals: { layout: 'layouts/layout-admin'} },
-
+  'GET /delay':                { action: 'Tracking/getAllDelay' , locals: { layout: 'layouts/layout-admin'} },
+  'POST /unhandle':              'Tracking.getDelayNotHandled'
 
 };
