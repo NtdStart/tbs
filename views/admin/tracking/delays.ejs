@@ -30,9 +30,16 @@
     
                     <% for(let i = 0; i < status.length; i++){ %>
                         <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
-                            <td id="status<%=tracking.label_id%>">
-                                <%= status[i].description %>
-                            </td>
+                            <% if(tracking.arrJson[0].status_id == "4"){ %>
+                                <td id="status<%=tracking.label_id%>">
+                                        <%= status[i].description %> <span style='color:red'>[Delay]</span>
+                                    </td>
+                            <% }else{ %>
+                                <td id="status<%=tracking.label_id%>">
+                                        <%= status[i].description %>
+                                    </td>
+                            <% } %>
+                            
                             <% } %>
                                 <% } %>
     
@@ -83,11 +90,25 @@
                                     <% } %>
                                 </td>
                                     <td >
-                                        <div id=<%= tracking.label_id %> >
+                                        <div id=<%= tracking.label_id %>  data-toggle="modal" data-target="#myModal">
                                             <% if(tracking.arrHandling){ %>
                                                 <% tracking.arrHandling.forEach((h, i) => { %>
                                                     <span style="color:blue">Lần <%= i + 1 %>: </span>
                                                         <%= h %>
+                                                    
+                                                    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="height: 30px;">Xem</button> -->
+<!-- Modal -->
+                                                        <div id="myModal" class="modal fade" role="dialog">
+                                                            <div class="modal-dialog">
+                                                                <!-- Modal content-->
+                                                                <div class="modal-content">
+                                                                <img src="https://upload.wikimedia.org/wikipedia/en/b/b4/SailsJS_logo.png">
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                </div>
+                                                                </div>
+                                                          </div>
+                                                            </div>
                                                         <br />
                                                 <% }) %>
                                             <% } %>
@@ -109,6 +130,9 @@
 <script>
     var objstatus = JSON.stringify(status);
 
+    function toggle(){
+        $('#myModal').toggle(500);
+    }
 
     function postMessage() {
         io.socket.post('/api/tracking', { message: 'thông điệp' }, function (resData, jwRes) {
@@ -130,7 +154,7 @@
 
 
     io.socket.on('server-send-Message', function (msg) {
-        console.log(msg);
+
         const { updatedTracking } = msg;
 
         // alert(document.getElementById(updatedTracking.label_id).innerHTML);
@@ -147,8 +171,7 @@
     })
 
     io.socket.on('new-tracking', function (msg) {
-        console.log(msg);
-        
+
         const { newDelayTracking } = msg;
         if(newDelayTracking){
 
@@ -166,7 +189,7 @@
 
         reason = "<td style='color:red'>" + reason + "</td>";
 
-        let pickMoney = "<td style=''colorLred'><span style='color:blue'>Lần " + 1 + ": </span><span style='color:red'>"+ newDelayTracking.arrJson[0].pick_money + "</span></td>";
+        let pickMoney = "<td style='color:red'><span style='color:blue'>Lần " + 1 + ": </span><span >"+ newDelayTracking.arrJson[0].pick_money + "</span></td>";
  
 
         const handle = `<td>    
@@ -184,16 +207,14 @@
 
 
     io.socket.on('update-tracking', function (msg) {
-
         const { updatedTracking, status } = msg;
-        console.log(updatedTracking);
 
     if(updatedTracking){
         const id = updatedTracking.label_id;
         const tbody = `<tbody id="tbody${id}">`;
         const tbodyEnd = `</tbody>`;
         const label = `<td>${updatedTracking.label_id}</td>`
-        const statusInfo = "<td>" + updatedTracking.status_info + "</td>";
+        const statusInfo = "<td>" + updatedTracking.status_info + "<span style='color:red'>[Delay]<span></td>";
 
         let reason = "";
 
@@ -233,11 +254,27 @@
 
         document.getElementById("tbody" + updatedTracking.label_id).remove();
         // $("#tbody" + updatedTracking.label_id).remove();
-    }
-        
+    }       
     });
 
-    
+    io.socket.on('server-send-handled-delay', function(msg){
+        // console.log(msg);
+        const { handledDelay, notHandledDelays } = msg;
+        
+        if( handledDelay ){   
+          const soLuong = notHandledDelays.length;
+          document.getElementById("amount").innerHTML = soLuong;
+          document.getElementById('li'+handledDelay.label_id).remove();
+        }
+      })
 
+    function saveMessageLay(label_id) {
+          const messageSocket = document.getElementById("layhandling" + label_id).value
+          
+          document.getElementById("handling" + label_id).value = "";
+          io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
+        });
+      } 
+    
     postMessage();
 </script>

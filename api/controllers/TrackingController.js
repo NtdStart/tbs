@@ -12,16 +12,14 @@ module.exports = {
         });
     },
 
-    GiaoHangTietKiemWebHooks: async function (req, res) {
+    gHTKWebHooks: async function (req, res) {
         sails.log(req.body);
 
         let { label_id, partner_id, status_id, action_time, reason_code, reason, weight, fee, pick_money } = req.body;
         pick_money = convertTypeCurr.fn(pick_money);
         fee = convertTypeCurr.fn(fee);
         const newData = JSON.stringify({ partner_id, status_id, action_time, reason_code, reason, weight, fee, pick_money })
-
         const tracking = await Tracking.findOne({ 'label_id': label_id }).catch(error => sails.log(error));
-
         if (!tracking) {
             const newTracking = await Tracking.create({ label_id, data: newData, status_id, reason }).fetch()
             if (!newTracking) return res.send('cannot create tracking');
@@ -44,14 +42,11 @@ module.exports = {
                     newTracking.status_info = ghtk_status_id.STATUS_ID[i].description;
                 }
             }
-
             let newDelayTracking;
-
-
             if (newTracking.status_id == "4" && newTracking.arrJson[0].reason != '' || newTracking.status_id == "9" || newTracking.status_id == "10" || newTracking.status_id == "49" || newTracking.status_id == "410") {
                 newDelayTracking = newTracking;
 
-                let delay = await Tracking.find({
+                let delays = await Tracking.find({
                     where:
                     {
                         or:
@@ -65,25 +60,23 @@ module.exports = {
                             { status_id: "410" }]
                     }
                 }).sort('updatedAt DESC').catch(e => res.send('error: ' + e));
-                let notHandledDelay = [];
-                delay.forEach(d => {
+                let notHandledDelays = [];
+                delays.forEach(d => {
                     if (d.isHandled == false) {
-                        notHandledDelay.push(d)
+                        notHandledDelays.push(d)
                     }
                 })
 
-
                 sails.sockets.broadcast('cskh', 'new-tracking', { newDelayTracking, newTracking, status: ghtk_status_id.STATUS_ID });
-                sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { newDelayTracking, notHandledDelay });
+                sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { newDelayTracking, notHandledDelays });
 
             } else {
                 sails.sockets.broadcast('cskh', 'new-tracking', { newTracking, status: ghtk_status_id.STATUS_ID })
             }
-
             return res.ok();
         }
 
-        if (tracking) {
+        else {
             let isHandled = false;
             const updatedTracking = await Tracking.updateOne({ label_id }, { isHandled, data: tracking.data + ";" + newData, reason });
 
@@ -127,26 +120,24 @@ module.exports = {
                         { status_id: "410" }]
                     }
                 }).sort('updatedAt DESC').catch(e => res.send('error: ' + e));
-                let notHandledDelay = [];
+                let notHandledDelays = [];
                 delay.forEach(d => {
                     if (d.isHandled == false) {
-                        notHandledDelay.push(d)
+                        notHandledDelays.push(d)
                     }
                 })
 
-                sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { updatedTracking, notHandledDelay });
+                sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { updatedTracking, notHandledDelays });
             }
 
             sails.sockets.broadcast('cskh', 'update-tracking', { updatedTracking, status: ghtk_status_id.STATUS_ID });
-
             return res.ok();
         }
     },
 
     getAllTrackings: async (req, res) => {
-        if (!req.me) {
-            return res.redirect('/');
-        }
+        if (!req.me) return res.redirect('/');
+        
         let trackings = await Tracking.find({})
             .sort('createdAt DESC')
             .catch(e => console.log('error: ' + e));
@@ -154,7 +145,6 @@ module.exports = {
         trackings = convert_to_array_json.convert(trackings);
 
         const me = req.me;
-        // trackings = trackings.reverse();
 
         let notHandles = await Tracking.find({
             where:
@@ -170,22 +160,27 @@ module.exports = {
                     { status_id: "410" }]
             }
         })
-        let notHandledDelay = [];
+        let notHandledDelays = [];
 
         notHandles.forEach(tracking => {
 
             if (tracking.isHandled == false  ) {
-                notHandledDelay.push(tracking)
+                notHandledDelays.push(tracking)
             }
         })
 
-        sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { notHandledDelay });
+        sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { notHandledDelays });
 
-        return res.view('admin/index', { trackings, notHandledDelay, me, status: ghtk_status_id.STATUS_ID, code: ghtk_status_id.REASON_CODE })
+        return res.view('admin/tracking/index', { 
+            trackings, 
+            notHandledDelays,
+            me, 
+            status: ghtk_status_id.STATUS_ID, 
+            code: ghtk_status_id.REASON_CODE 
+        })
     },
 
     handling: async function (req, res) {
-        // const nameUser = req.me.fullName;
         const me = req.me;
         const { messageSocket, message, label_id } = req.body;
 
@@ -219,19 +214,40 @@ module.exports = {
 
         const updatedTracking = await Tracking.updateOne({ "label_id": label_id }, { isHandled });
 
-
         updatedTracking['arrJson'] = arr;
         updatedTracking['arrHandling'] = arrHandling;
 
+        let delays = await Tracking.find({})
+            .where({
+                or:
+                    [{
+                        status_id: 4,
+                        reason: { '!=': '' }
+                    },
+                    { status_id: "9" },
+                    { status_id: "10" },
+                    { status_id: "49" },
+                    { status_id: "410" }]
+            
+            })
+            .sort('updatedAt DESC')
+            .catch(e => res.send('error: ' + e));
+            let notHandledDelays = [];
+            delays.forEach(d => {
+                if(d.isHandled == false){
+                    notHandledDelays.push(d);
+                }
+            })
+            
         sails.sockets.broadcast('cskh', 'server-send-Message', { updatedTracking });
-        sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { handledDelay: updatedTracking });
+        if(updatedTracking.arrHandling >= updatedTracking.arrJson){
+            sails.sockets.broadcast('cskh', 'server-send-handled-delay', { handledDelay: updatedTracking, notHandledDelays });
+        }
         return res.redirect("..");
     },
 
-    getAllDelay: async function (req, res) {
-        if (!req.me) {
-            return res.redirect('/');
-        }
+    getAllDelays: async function (req, res) {
+        if (!req.me) return res.redirect('/');
 
         let trackings = await Tracking.find({
             where:
@@ -255,51 +271,33 @@ module.exports = {
         trackings = convert_to_array_json.convert(trackings);
 
         const me = req.me;
-        // trackings = trackings.reverse();
-        let notHandledDelay = [];
+        let notHandledDelays = [];
         trackings.forEach(tracking => {
             if (tracking.isHandled == false) {
-                notHandledDelay.push(tracking)
+                notHandledDelays.push(tracking)
             }
         })
-        notHandledDelay.forEach(e => {
+        notHandledDelays.forEach(e => {
             for (let i = 0; i < ghtk_status_id.STATUS_ID.length; i++) {
                 if (ghtk_status_id.STATUS_ID[i].status_id == e.arrJson[e.arrJson.length - 1].status_id) {
                     e.status_info = ghtk_status_id.STATUS_ID[i].description;
                 }
             }
         })
-
-        console.log(notHandledDelay);
-
-        return res.view('admin/delay', { trackings, notHandledDelay, me, status: ghtk_status_id.STATUS_ID });
+        return res.view('admin/tracking/delays', { trackings, notHandledDelays, me, status: ghtk_status_id.STATUS_ID });
     },
 
-    getDelayNotHandled: async function (req, res) {
-        const {id} = req.body;
-        let notHandledDelay = await Tracking.find({ isHandled: 'false' })
-            .where({
-                or:
-                    [{
-                        status_id: 4,
-                        reason: { '!=': '' }
-                    },
-                    { status_id: "9" },
-                    { status_id: "10" },
-                    { status_id: "49" },
-                    { status_id: "410" }]
-            
-            })
-            .sort('updatedAt DESC')
-            .catch(e => res.send('error: ' + e));
-            
-            let unhandle;
-            notHandledDelay.forEach((e, index) => {
-                if( e.label_id == id){
-                    unhandle = e;
-                }
-            })
+    getUnhandle: async function (req, res) {
 
+        const me = req.me;
+        // console.log(req.body.id);
+        console.log(req.body);
+        const { id } = req.body;
+
+        let unhandle = await Tracking.findOne({ label_id: id }).catch(e => res.send(e))
+           if(!unhandle) res.send('cannot find unhandle')
+            console.log(unhandle);
+            
             if (unhandle.handling) {
                 const arrHandling = unhandle.handling.split(';;');
                 unhandle['arrHandling'] = arrHandling;
@@ -320,9 +318,61 @@ module.exports = {
             }
             // console.log(unhandle);
 
-        sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { unhandle, notHandledDelay });
-        sails.sockets.broadcast('cskh', 'server-send-an-unhandle', { unhandle });
+            let trackings = await Tracking.find({
+                where:
+                {
+                    or:
+                        [{
+                            status_id: 4,
+                            reason: { '!=': '' }
+                        },
+                        { status_id: "9" },
+                        { status_id: "10" },
+                        { status_id: "49" },
+                        { status_id: "410" }]
+                }
+            })
+                .sort('updatedAt DESC')
+                .catch(e => res.send('error: ' + e));
+    
+            if (!trackings) return trackings = [];
+    
+            trackings = convert_to_array_json.convert(trackings);
 
+            // trackings = trackings.reverse();
+            let notHandledDelays = [];
+            trackings.forEach(tracking => {
+                if (tracking.isHandled == false) {
+                    notHandledDelays.push(tracking)
+                }
+            })
+            notHandledDelays.forEach(e => {
+                for (let i = 0; i < ghtk_status_id.STATUS_ID.length; i++) {
+                    if (ghtk_status_id.STATUS_ID[i].status_id == e.arrJson[e.arrJson.length - 1].status_id) {
+                        e.status_info = ghtk_status_id.STATUS_ID[i].description;
+                    }
+                }
+            })
+
+        sails.sockets.broadcast('cskh', 'server-send-delay-not-handle', { unhandle, notHandledDelays });
+        // sails.sockets.broadcast('cskh', 'server-send-an-unhandle', { unhandle });
+        return res.view('admin/tracking/unhandle', { unhandle, notHandledDelays, me, layout: null});
+    },
+
+    upImage: async function(req, res){
+        req.file('image').upload({
+            // don't allow the total upload size to exceed ~100MB
+            maxBytes: 2000000,
+            // set the directory
+            dirname: '../../assets/images/handles'
+          },function (err, uploadedFile) {
+            // if error negotiate
+            if (err) return res.negotiate(err);
+            // logging the filename
+            console.log(uploadedFile.filename);
+            // send ok response
+            return res.ok();
+          })
     },
 
 }

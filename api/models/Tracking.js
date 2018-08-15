@@ -24,4 +24,5 @@ module.exports = {
         reason: { type: 'string'},
         isHandled: { type: 'boolean' }
     },
+    
   };

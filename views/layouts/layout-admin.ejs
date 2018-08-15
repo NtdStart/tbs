@@ -79,7 +79,8 @@
         <script src="/dependencies/sails.io.js"></script>
         <script src="/dependencies/jquery.min.js"></script>
 </head>
-
+<audio id="audio" src="http://www.soundjay.com/button/beep-07.wav" autostart="false" ></audio>
+ 
     <!-- @Page Loader -->
     <!-- =================================================== -->
     <div id="loader">
@@ -105,7 +106,7 @@
           <div class="sidebar-logo">
             <div class="peers ai-c fxw-nw">
               <div class="peer peer-greed">
-                <a class="sidebar-link td-n" href="index.html">
+                <a class="sidebar-link td-n" href="/">
                   <div class="peers ai-c fxw-nw">
                     <div class="peer">
                       <div class="logo">
@@ -147,7 +148,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="sidebar-link" href="/delay">
+              <a class="sidebar-link" href="/admin/delay">
                 <span class="icon-holder">
                   <i class="c-teal-500 ti-view-list-alt"></i>
                 </span>
@@ -181,30 +182,31 @@
             </ul>
             <ul class="nav-right">
               <li class="notifications dropdown">
-                <span class="counter bgc-red" id="amount"><%= notHandledDelay.length %></span>
-                <a href="" class="dropdown-toggle no-after" data-toggle="dropdown">
-                  <i class="ti-bell"> Delay</i>
+                <span class="counter bgc-red" id="amount"><%= notHandledDelays.length %></span>
+                <a href="" class="dropdown-toggle no-after"  data-toggle="dropdown">
+                  <i class="ti-bell" ></i>
                 </a>
-
                 <ul class="dropdown-menu">
                   <li class="pX-20 pY-25s bdB">
                     <i class="ti-bell pR-10"></i>
                     <span class="fsz-sm fw-600 c-grey-900">Notifications</span>
                   </li>
-                  <div id="delay">
-                      <% notHandledDelay.forEach((e, i) => { %>
-                        <li class="pX-20 pY-25s bdB">
+                  <div id="delay" >
+                      <% notHandledDelays.forEach((e, i) => { %>
+                        <!-- <a  href="/admin/unhandle/<%= e.label_id %>" > -->
+                          <div onclick="showNotification('<%= e.label_id %>')">
+                          <li class="pX-20 pY-25s bdB" id="li<%= e.label_id %>">
                             <div id="show"   class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
                                 <span>
                                   <span style="color:red">[Delay]</span>
                                   <span class="fw-500"><%= e.label_id %></span>. Lý do:
                                   <span style="color:red"><%= e.reason %> </span>
                                   <br />
-                                  <button type="button"  value=<%= e.label_id %> onclick="sendIndex(this.value)" class="btn btn-primary">Xem</button>
+                                  <!-- <button type="button"  value=<%= e.label_id %> onclick="sendIndex(this.value)" class="btn btn-primary">Xem</button> -->
                              </span>
                             </div>
                         </li>
-                        
+                      </div>                        
                       <% }) %>
                   </div>
                   
@@ -306,10 +308,9 @@
           <div id="body">
               <%- body -%>
           </div>
-          <tbody></tbody>
+          
           <div id="hand">
-
-            </div>
+          </div>
         </main>
 
         <!-- ### $App Screen Footer ### -->
@@ -318,7 +319,6 @@
         </footer>
       </div>
     </div>
-
    
     <!--SCRIPTS-->
     <script src="/dependencies/vendor.js"></script>
@@ -363,43 +363,77 @@
             }
         })
       }
+      
+      function showNotification(id, callback) {
+      $.ajax(`/admin/unhandle`, {
+        type: 'POST',
+        data:{id},  
+        success: function(data) { 
+          $("#body").hide();
+          document.getElementById('hand').innerHTML = data; 
+        },
+        error: function(){ 
+          console.log('error');
+         }
+        });
+      }
+
+       function saveMessageLay(label_id) {
+
+          const messageSocket = document.getElementById("layhandling" + label_id).value
+          document.getElementById("layhandling" + label_id).value = "";
+          io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
+          });
+      } 
 
       io.socket.on('server-send-delay-not-handle', function (msg) {
-        // console.log(msg);
-
-        const { notHandledDelay, newDelayTracking, updatedTracking, handledDelay } = msg;    
         
-  
-        if( newDelayTracking &&  notHandledDelay || updatedTracking &&  notHandledDelay ){   
-          const amount = notHandledDelay.length;
+        const { notHandledDelays, newDelayTracking, updatedTracking} = msg;    
+        
+        if( newDelayTracking &&  notHandledDelays || updatedTracking &&  notHandledDelays ){   
+          const amount = notHandledDelays.length;
           document.getElementById("amount").innerHTML = amount;
-  
-         const newUnhandled = `<li class="pX-20 pY-25s bdB" >
+          
+          var sound = document.getElementById("audio");
+          sound.play();
+ 
+         const newUnhandled = 
+        //  `<a href="/admin/unhandle/${newDelayTracking.label_id || updatedTracking.label_id}">
+          `<div onclick="showNotification('${newDelayTracking.label_id || updatedTracking.label_id}')">        
+                              <li class="pX-20 pY-25s bdB" id='li${newDelayTracking.label_id || updatedTracking.label_id}'">
                             <a href="" id="show" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
                                 <span>
                                   <span style="color:red">[Delay]</span>
                                   <span class="fw-500">${ newDelayTracking.label_id || updatedTracking.label_id}</span>. Lý do:
                                   <span style="color:red">${ newDelayTracking.reason || updatedTracking.reason} </span>
-                                  <br />
-                                  <button type="button"  value=${ newDelayTracking.label_id || updatedTracking.label_id} onclick="sendIndex(this.value)" class="btn btn-primary">Xem</button>
+                                  <br />               
                              </span>
                             </a>
-                        </li>`
-          if(handledDelay){
-          const amount = notHandledDelay.length -1;
-          document.getElementById("amount").innerHTML = amount;
-        }
-
+                        </li>
+                        <div>`
+                            var sound = document.getElementById("audio");
+                            sound.play();                    
         $("#delay").prepend(newUnhandled);
-                      }
+        }
+      })
+
+
+      io.socket.on('server-send-handled-delay', function(msg){
+        // console.log(msg);
+        const { handledDelay, notHandledDelays } = msg;    
+        if( handledDelay ){   
+          const soLuong = notHandledDelays.length;
+          document.getElementById("amount").innerHTML = soLuong;
+          document.getElementById('li'+handledDelay.label_id).remove();
+        }
       })
 
       function sendIndex(id) {
-        io.socket.post('/unhandle', {id}, function (body, response) {
+        console.log(id);
+        
+        io.socket.post('/admin/unhandle', {id}, function (body, response) {
         });
       }
-
-      
 
       io.socket.on('server-send-an-unhandle', function(msg){
         const { unhandle } = msg;
@@ -414,14 +448,13 @@
                     <th scope="col">Tiền thu hộ</th>
                     <th scope="col">Thông tin xử lý</th>
                 </tr>
-            </thead>
-            
+            </thead>    
         `
         let id = unhandle.label_id;
         const tbody = `<tbody id="tbody${id}">`; 
         const tbodyEnd = `</tbody>`;
         const label = `<td>${unhandle.label_id}</td>`;
-        const statusInfo = "<td>" + unhandle.status_info + "</td>";
+        const statusInfo = `<td>${unhandle.status_info}</td>`;
 
         let reason = "";
     
@@ -435,38 +468,27 @@
  
 
         const handle = `<td>    
-                            <div id='${unhandle.label_id}' ></div> 
-                            <input type="text" name="message" id="handling${unhandle.label_id}">                   
-                            <button class="btn btn-success" value=${unhandle.label_id} onclick="saveMessage(this.value)" >Save</button>
+                            <div id="layhand${unhandle.label_id}" ></div> 
+                            <input type="text" name="message" id="layhandling${unhandle.label_id}">                   
+                            <button class="btn btn-success" value=${unhandle.label_id} onclick="saveMessageLay('${unhandle.label_id}')" >Save</button>
                         </td>`;
    
-           $("#body").remove();
+           $("#body").hide();
           document.getElementById("hand").innerHTML = head + tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd + `</table>`;
       }),
 
-      function saveMessage(label_id) {
-
-          const messageSocket = document.getElementById("handling" + label_id).value
-          document.getElementById("handling" + label_id).value = "";
-          io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
-        });
-      } ,
-
       io.socket.on('server-send-Message', function (msg) {
-        console.log(msg);
+        // console.log(msg);
         const { updatedTracking } = msg;
-
-        // alert(document.getElementById(updatedTracking.label_id).innerHTML);
 
         let handling = "";
 
         updatedTracking.arrHandling.forEach((h, i) => {
             handling += "<span style='color:blue'>Lần " + ++i + ": </span>" + h + "<br />";
         })
-        const hand = ` <div id=${updatedTracking.label_id0}> ${handling} </div> `;
+        const hand = `<div id='layhand${updatedTracking.label_id}'> ${handling} </div> `;
 
-        document.getElementById(updatedTracking.label_id).innerHTML = hand;
-
+        document.getElementById('layhand'+updatedTracking.label_id).innerHTML = hand;
     })
 
      
