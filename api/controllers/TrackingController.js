@@ -78,11 +78,10 @@ module.exports = {
 
         else {
             let isHandled = false;
-            const updatedTracking = await Tracking.updateOne({ label_id }, { isHandled, data: tracking.data + ";" + newData, reason });
+            const updatedTracking = await Tracking.updateOne({ label_id },{ isHandled, data: tracking.data + ";" + newData, reason,status_id });
 
             if (!updatedTracking) return res.send('failed to update');
 
-            updatedTracking.status_id = status_id;
             const arrData = updatedTracking.data.split(';');  //mảng string các obj
             const arr = [];
             arrData.forEach(a => {
@@ -249,39 +248,48 @@ module.exports = {
     getAllDelays: async function (req, res) {
         if (!req.me) return res.redirect('/');
 
-        let trackings = await Tracking.find({
+        let delays = await Tracking.find({
             where:
             {
                 or:
                     [{
-                        status_id: 4,
+                        status_id: "4",
                         reason: { '!=': '' }
                     },
                     { status_id: "9" },
                     { status_id: "10" },
                     { status_id: "49" },
-                    { status_id: "410" }]
+                    { status_id: "410" },
+                    { status_id: { "!=": "6"} },]
             }
         })
             .sort('updatedAt DESC')
             .catch(e => res.send('error: ' + e));
 
-        if (!trackings) return trackings = [];
+        if (!delays) return delays = [];
 
-        trackings = convert_to_array_json.convert(trackings);
+        delays = convert_to_array_json.convert(delays);
 
         const me = req.me;
         let notHandledDelays = [];
-        trackings.forEach(tracking => {
+        delays.forEach(tracking => {
             if (tracking.isHandled == false) {
                 notHandledDelays.push(tracking)
             }
         })
+
         notHandledDelays.forEach(e => {
             for (let i = 0; i < ghtk_status_id.STATUS_ID.length; i++) {
                 if (ghtk_status_id.STATUS_ID[i].status_id == e.arrJson[e.arrJson.length - 1].status_id) {
                     e.status_info = ghtk_status_id.STATUS_ID[i].description;
                 }
+            }
+        })
+ 
+        let trackings = [];
+        delays.forEach(tracking => {
+            if (tracking.status_id != 6 && tracking.status_id != 21 && tracking.status_id != 45 && tracking.status_id != 11) {
+                trackings.push(tracking)
             }
         })
         return res.view('admin/tracking/delays', { trackings, notHandledDelays, me, status: ghtk_status_id.STATUS_ID });

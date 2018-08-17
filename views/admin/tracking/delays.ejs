@@ -22,101 +22,101 @@
     
         <div id="divlist">
             <% trackings.forEach(function(tracking, index){ %>
-                <tbody id="tbody<%= tracking.label_id %>">
+                    <tbody id="tbody<%= tracking.label_id %>">
     
-                    <td>
-                        <%=tracking.label_id%>
-                    </td>
-    
-                    <% for(let i = 0; i < status.length; i++){ %>
-                        <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
-                            <% if(tracking.arrJson[0].status_id == "4"){ %>
-                                <td id="status<%=tracking.label_id%>">
-                                        <%= status[i].description %> <span style='color:red'>[Delay]</span>
-                                    </td>
-                            <% }else{ %>
-                                <td id="status<%=tracking.label_id%>">
-                                        <%= status[i].description %>
-                                    </td>
-                            <% } %>
-                            
-                            <% } %>
+                        <td>
+                            <%=tracking.label_id%>
+                        </td>
+        
+                        <% for(let i = 0; i < status.length; i++){ %>
+                            <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
+                                <% if(tracking.arrJson[0].status_id == "4"){ %>
+                                    <td id="status<%=tracking.label_id%>">
+                                            <%= status[i].description %> <span style='color:red'>[Delay]</span>
+                                        </td>
+                                <% }else{ %>
+                                    <td id="status<%=tracking.label_id%>">
+                                            <%= status[i].description %>
+                                        </td>
                                 <% } %>
-    
-                                <td style="color:red" id="reason<%=tracking.label_id%>">
-                                    <% if(tracking.arrJson[0].status_id == "4" && tracking.arrJson[0].reason == ""){ %>
-                                        
-                                        <% for(let i = 1; i < tracking.arrJson.length; i++){ %>
-                                            <span style="color:blue">Lần
-                                             <%= i %>:</span><span style="color:red"><%= tracking.arrJson[i].reason %></span>
-                                            <span  style='color:blue'>(<%= tracking.arrJson[i].action_time %>)<span>
-                                            
-                                                <br />
-                                        
+                                
+                                <% } %>
                                     <% } %>
-                                <% }else { %>
-                                    
-                                        <% tracking.arrJson.forEach((json, i) => { %>                                        
-                                                <span style="color:blue">Lần
-                                                <%= i + 1%>:</span>
-    
-                                            <span style="color: red"><%= json.reason %></span>
-                                            <span  style='color:blue'>(<%= json.action_time %>)<span>
-                                                
-                                                    <br />
-                                                    <% }) %>                                    
-                                    
-                                <% } %>
-                                </td>  
-                                <td style="color:red" id="reason<%=tracking.label_id%>">
-                                    <% if(tracking.arrJson[0].status_id == "4" &&tracking.arrJson[0].reason == ""){ %>
-                                        
+        
+                                    <td style="color:red" id="reason<%=tracking.label_id%>">
+                                        <% if(tracking.arrJson[0].status_id == "4" && tracking.arrJson[0].reason == ""){ %>
+                                            
                                             <% for(let i = 1; i < tracking.arrJson.length; i++){ %>
                                                 <span style="color:blue">Lần
-                                                 <%= i %>:</span><%= tracking.arrJson[i].pick_money %>                                   
+                                                 <%= i %>:</span><span style="color:red"><%= tracking.arrJson[i].reason %></span>
+                                                <span  style='color:blue'>(<%= tracking.arrJson[i].action_time %>)<span>
+                                                
                                                     <br />
                                             
                                         <% } %>
-                                    <% }else{ %>
-                                       
+                                    <% }else { %>
+                                        
                                             <% tracking.arrJson.forEach((json, i) => { %>                                        
                                                     <span style="color:blue">Lần
                                                     <%= i + 1%>:</span>
         
-                                                <%= json.pick_money %>
+                                                <span style="color: red"><%= json.reason %></span>
+                                                <span  style='color:blue'>(<%= json.action_time %>)<span>
+                                                    
                                                         <br />
                                                         <% }) %>                                    
                                         
                                     <% } %>
-                                </td>
-                                    <td >
-                                        <div id=<%= tracking.label_id %>  data-toggle="modal" data-target="#myModal">
-                                            <% if(tracking.arrHandling){ %>
-                                                <% tracking.arrHandling.forEach((h, i) => { %>
-                                                    <span style="color:blue">Lần <%= i + 1 %>: </span>
-                                                        <%= h %>
-                                                    
-                                                    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="height: 30px;">Xem</button> -->
-<!-- Modal -->
-                                                        <div id="myModal" class="modal fade" role="dialog">
-                                                            <div class="modal-dialog">
-                                                                <!-- Modal content-->
-                                                                <div class="modal-content">
-                                                                <img src="https://upload.wikimedia.org/wikipedia/en/b/b4/SailsJS_logo.png">
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                </div>
-                                                                </div>
-                                                          </div>
-                                                            </div>
+                                    </td>  
+                                    <td style="color:red" id="reason<%=tracking.label_id%>">
+                                        <% if(tracking.arrJson[0].status_id == "4" &&tracking.arrJson[0].reason == ""){ %>
+                                            
+                                                <% for(let i = 1; i < tracking.arrJson.length; i++){ %>
+                                                    <span style="color:blue">Lần
+                                                     <%= i %>:</span><%= tracking.arrJson[i].pick_money %>                                   
                                                         <br />
-                                                <% }) %>
+                                                
                                             <% } %>
-                                        </div>
-                                            <input type="text" class="a" name="message" id="handling<%= tracking.label_id %>"   >
-                                            <button class="btn btn-success" value=<%= tracking.label_id %> onclick="saveMessage(this.value)" >Save</button>                                                 
+                                        <% }else{ %>
+                                           
+                                                <% tracking.arrJson.forEach((json, i) => { %>                                        
+                                                        <span style="color:blue">Lần
+                                                        <%= i + 1%>:</span>
+            
+                                                    <%= json.pick_money %>
+                                                            <br />
+                                                            <% }) %>                                    
+                                            
+                                        <% } %>
                                     </td>
-                </tbody>
+                                        <td >
+                                            <div id=<%= tracking.label_id %>  data-toggle="modal" data-target="#myModal">
+                                                <% if(tracking.arrHandling){ %>
+                                                    <% tracking.arrHandling.forEach((h, i) => { %>
+                                                        <span style="color:blue">Lần <%= i + 1 %>: </span>
+                                                            <%= h %>
+                                                        
+                                                        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="height: 30px;">Xem</button> -->
+    <!-- Modal -->
+                                                            <div id="myModal" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                    <img src="https://upload.wikimedia.org/wikipedia/en/b/b4/SailsJS_logo.png">
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                    </div>
+                                                                    </div>
+                                                              </div>
+                                                                </div>
+                                                            <br />
+                                                    <% }) %>
+                                                <% } %>
+                                            </div>
+                                                <input type="text" class="a" name="message" id="handling<%= tracking.label_id %>"   >
+                                                <button class="btn btn-success" value=<%= tracking.label_id %> onclick="saveMessage(this.value)" >Save</button>                                                 
+                                        </td>
+                    </tbody>
                 <% })%>   
         </div>
     </table>
