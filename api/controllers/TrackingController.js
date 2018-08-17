@@ -259,8 +259,7 @@ module.exports = {
                     { status_id: "9" },
                     { status_id: "10" },
                     { status_id: "49" },
-                    { status_id: "410" },
-                    { status_id: { "!=": "6"} },]
+                    { status_id: "410" }]
             }
         })
             .sort('updatedAt DESC')
