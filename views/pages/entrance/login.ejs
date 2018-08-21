@@ -1,40 +1,38 @@
-<div class="peers ai-s fxw-nw h-100vh" id="login" v-cloak>
-    <div class="d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv" style='background-image: url("/static/images/bg.jpg")'>
-      <div class="pos-a centerXY">
-        <div class="bgc-white bdrs-50p pos-r" style="width: 120px; height: 120px;">
-          <img class="pos-a centerXY" src="/static/images/logo.png" alt="">
+<div id="login" v-cloak>
+  <ajax-form action="login" :syncing.sync="syncing" :cloud-error.sync="cloudError" :form-data="formData"
+             :form-rules="formRules" :form-errors.sync="formErrors" @submitted="submittedForm()">
+    <div class="form-group">
+      <label class="form-group has-feedback">Username</label>
+      <input type="email" class="form-control" placeholder="John Doe"
+             :class="[formErrors.emailAddress ? 'is-invalid' : '']" v-model.trim="formData.emailAddress"
+             autocomplete="email" focus-first>
+    </div>
+    <div class="form-group">
+      <label class="form-group has-feedback">Password</label>
+      <input type="password" class="form-control" placeholder="Password"
+             :class="[formErrors.password ? 'is-invalid' : '']" v-model.trim="formData.password"
+             autocomplete="current-password">
+      <div class="invalid-feedback" v-if="formErrors.password">Please enter your password.</div>
+    </div>
+    <div class="form-group">
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+            <input type="checkbox" id="remember" name="rememberMe" v-model="formData.rememberMe" class="peer">
+            <label for="remember" class="peers peer-greed js-sb ai-c">
+              <span class="peer peer-greed">Remember Me</span>
+            </label>
+          </div>
         </div>
+        <!-- /.col -->
+        <div class="peer">
+          <button :syncing="syncing" class="btn btn-primary btn-block btn-flat">Login</button>
+        </div>
+        <!-- /.col -->
       </div>
     </div>
-    <div class="col-12 col-md-4 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r" style="min-width: 320px;">
-      <h4 class="fw-300 c-grey-900 mB-40">Login</h4>
-      <ajax-form action="login" :syncing.sync="syncing" :cloud-error.sync="cloudError" :form-data="formData" :form-rules="formRules" :form-errors.sync="formErrors" @submitted="submittedForm()">
-        <div class="form-group">
-          <label class="text-normal text-dark">Username</label>
-          <input type="email" class="form-control" placeholder="John Doe" :class="[formErrors.emailAddress ? 'is-invalid' : '']" v-model.trim="formData.emailAddress" autocomplete="email" focus-first>
-        </div>
-        <div class="form-group">
-          <label class="text-normal text-dark">Password</label>
-          <input type="password" class="form-control" placeholder="Password" :class="[formErrors.password ? 'is-invalid' : '']" v-model.trim="formData.password" autocomplete="current-password">
-          <div class="invalid-feedback" v-if="formErrors.password">Please enter your password.</div>
-        </div>
-        <div class="form-group">
-                <div class="peers ai-c jc-sb fxw-nw">
-                  <div class="peer">
-                    <div class="checkbox checkbox-circle checkbox-info peers ai-c">
-                      <input type="checkbox" id="remember" name="rememberMe" v-model="formData.rememberMe" class="peer" >
-                      <label for="remember" class="peers peer-greed js-sb ai-c">
-                        <span class="peer peer-greed">Remember Me</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="peer">
-                    <button :syncing="syncing"  class="btn btn-primary">Login</button>
-                  </div>
-                </div>
-              </div>
-    
-      </ajax-form>
-    </div>
-  </div>
-  <%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser() %>
+
+  </ajax-form>
+</div>
+
+<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser() %>

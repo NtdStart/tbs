@@ -54,7 +54,7 @@
       }
     </style>
    <!--STYLES-->
-   <link rel="stylesheet" href="/styles/style.css">
+   
    <!--STYLES END-->
   <body class="app">
     <!-- @TOC -->
@@ -75,12 +75,14 @@
                 <link rel="stylesheet" href="/styles/admin/index.css">
                 <link rel="stylesheet" href="/styles/importer.css">
                 <!--STYLES END-->
-    
+
         <script src="/dependencies/sails.io.js"></script>
         <script src="/dependencies/jquery.min.js"></script>
 </head>
+
 <audio id="audio" src="http://www.soundjay.com/button/beep-07.wav" autostart="false" ></audio>
- 
+
+
     <!-- @Page Loader -->
     <!-- =================================================== -->
     <div id="loader">
@@ -94,7 +96,7 @@
           loader.classList.add('fadeOut');
         }, 300);
       });
-    
+
     </script>
     <!-- @App Content -->
     <!-- =================================================== -->
@@ -206,10 +208,10 @@
                              </span>
                             </div>
                         </li>
-                      </div>                        
+                      </div>
                       <% }) %>
                   </div>
-                  
+
                   <li>
                     <ul class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
                       <li>
@@ -223,17 +225,17 @@
                               <span class="c-grey-600">liked your <span class="text-dark">post</span>
                             </span>
                           </span> -->
-                        </a>                
-                            
+                        </a>
+
                 <!-- ### $Sidebar Menu ### -->
                 <ul class="sidebar-menu scrollable pos-r">
                     <li class="nav-item mT-30 active">
                         <a class="sidebar-link" href="/admin">
-                            
+
                           </div>
                         </a>
                       </li>
-                      
+
                       <li>
                         <a href="" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
                           <div class="peer mR-15">
@@ -260,7 +262,7 @@
                   </li>
                 </ul>
               </li>
-              
+
               <li class="dropdown">
                 <a href="" class="dropdown-toggle no-after peers fxw-nw ai-c lh-1" data-toggle="dropdown">
                   <div class="peer mR-10">
@@ -304,11 +306,11 @@
 
         <!-- ### $App Screen Content ### -->
         <main class="main-content bgc-grey-100">
-          
+
           <div id="body">
               <%- body -%>
           </div>
-          
+
           <div id="hand">
           </div>
         </main>
@@ -319,10 +321,8 @@
         </footer>
       </div>
     </div>
-   
+
     <!--SCRIPTS-->
-    <script src="/dependencies/vendor.js"></script>
-    <script src="/dependencies/bundle.js"></script>
     <script src="/dependencies/lodash.js"></script>
     <script src="/dependencies/jquery.min.js"></script>
     <script src="/dependencies/bowser.js"></script>
@@ -353,7 +353,7 @@
     <!--SCRIPTS END-->
 
     <script>
-     
+
       function postMessage() {
         io.socket.post('/api/tracking', { message: 'thông điệp' }, function (resData, jwRes) {
             if (jwRes.statusCode != 200) {
@@ -363,16 +363,16 @@
             }
         })
       }
-      
+
       function showNotification(id, callback) {
       $.ajax(`/admin/unhandle`, {
         type: 'POST',
-        data:{id},  
-        success: function(data) { 
+        data:{id},
+        success: function(data) {
           $("#body").hide();
-          document.getElementById('hand').innerHTML = data; 
+          document.getElementById('hand').innerHTML = data;
         },
-        error: function(){ 
+        error: function(){
           console.log('error');
          }
         });
@@ -384,35 +384,35 @@
           document.getElementById("layhandling" + label_id).value = "";
           io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
           });
-      } 
+      }
 
       io.socket.on('server-send-delay-not-handle', function (msg) {
-        
-        const { notHandledDelays, newDelayTracking, updatedTracking} = msg;    
-        
-        if( newDelayTracking &&  notHandledDelays || updatedTracking &&  notHandledDelays ){   
+
+        const { notHandledDelays, newDelayTracking, updatedTracking} = msg;
+
+        if( newDelayTracking &&  notHandledDelays || updatedTracking &&  notHandledDelays ){
           const amount = notHandledDelays.length;
           document.getElementById("amount").innerHTML = amount;
-          
+
           var sound = document.getElementById("audio");
           sound.play();
- 
-         const newUnhandled = 
+
+         const newUnhandled =
         //  `<a href="/admin/unhandle/${newDelayTracking.label_id || updatedTracking.label_id}">
-          `<div onclick="showNotification('${newDelayTracking.label_id || updatedTracking.label_id}')">        
+          `<div onclick="showNotification('${newDelayTracking.label_id || updatedTracking.label_id}')">
                               <li class="pX-20 pY-25s bdB" id='li${newDelayTracking.label_id || updatedTracking.label_id}'">
                             <a href="" id="show" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">
                                 <span>
                                   <span style="color:red">[Delay]</span>
                                   <span class="fw-500">${ newDelayTracking.label_id || updatedTracking.label_id}</span>. Lý do:
                                   <span style="color:red">${ newDelayTracking.reason || updatedTracking.reason} </span>
-                                  <br />               
+                                  <br />
                              </span>
                             </a>
                         </li>
                         <div>`
                             var sound = document.getElementById("audio");
-                            sound.play();                    
+                            sound.play();
         $("#delay").prepend(newUnhandled);
         }
       })
@@ -420,8 +420,8 @@
 
       io.socket.on('server-send-handled-delay', function(msg){
         // console.log(msg);
-        const { handledDelay, notHandledDelays } = msg;    
-        if( handledDelay ){   
+        const { handledDelay, notHandledDelays } = msg;
+        if( handledDelay ){
           const soLuong = notHandledDelays.length;
           document.getElementById("amount").innerHTML = soLuong;
           document.getElementById('li'+handledDelay.label_id).remove();
@@ -430,7 +430,7 @@
 
       function sendIndex(id) {
         console.log(id);
-        
+
         io.socket.post('/admin/unhandle', {id}, function (body, response) {
         });
       }
@@ -448,16 +448,16 @@
                     <th scope="col">Tiền thu hộ</th>
                     <th scope="col">Thông tin xử lý</th>
                 </tr>
-            </thead>    
+            </thead>
         `
         let id = unhandle.label_id;
-        const tbody = `<tbody id="tbody${id}">`; 
+        const tbody = `<tbody id="tbody${id}">`;
         const tbodyEnd = `</tbody>`;
         const label = `<td>${unhandle.label_id}</td>`;
         const statusInfo = `<td>${unhandle.status_info}</td>`;
 
         let reason = "";
-    
+
         unhandle.arrJson.forEach((e, i) => {
             reason += "<span style='color:blue'>Lần " + ++i + ": </span><span style='color:red'>" + e.reason + "</span><span  style='color:blue'> (" + e.action_time + ")<span><br />";
         })
@@ -465,14 +465,14 @@
         reason = "<td style='color:red'>" + reason + "</td>";
 
         let pickMoney = "<td style=''colorLred'><span style='color:blue'>Lần " + 1 + ": </span><span style='color:red'>"+ unhandle.arrJson[0].pick_money + "</span></td>";
- 
 
-        const handle = `<td>    
-                            <div id="layhand${unhandle.label_id}" ></div> 
-                            <input type="text" name="message" id="layhandling${unhandle.label_id}">                   
+
+        const handle = `<td>
+                            <div id="layhand${unhandle.label_id}" ></div>
+                            <input type="text" name="message" id="layhandling${unhandle.label_id}">
                             <button class="btn btn-success" value=${unhandle.label_id} onclick="saveMessageLay('${unhandle.label_id}')" >Save</button>
                         </td>`;
-   
+
            $("#body").hide();
           document.getElementById("hand").innerHTML = head + tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd + `</table>`;
       }),
@@ -491,7 +491,7 @@
         document.getElementById('layhand'+updatedTracking.label_id).innerHTML = hand;
     })
 
-     
+
       postMessage();
 
     </script>

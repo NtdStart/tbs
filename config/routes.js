@@ -66,7 +66,7 @@ module.exports.routes = {
   // WEB PAGE ADMIN
   // sửa lại url tất cả đều phải đứng sau /admin
 
-  'GET /admin': {view: 'admin/ghtkAll', action: 'Tracking/getAllTrackings', locals: {layout: 'layouts/layout-admin'}},
+  'GET /admin': {view: 'admin/ghtkAll', action: 'Tracking/getAllTrackings', locals: {layout: 'layouts/layout-admin-lte'}},
   'GET /admin/tracking': 'Tracking.getAllTrackings',
   'GET /admin/delay': {action: 'Tracking/getAllDelays', locals: {layout: 'layouts/layout-admin'}},
   'POST /admin/unhandle': {action: 'Tracking/getUnhandle'},
