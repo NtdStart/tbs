@@ -1,280 +1,292 @@
-<h2 style="color:black">Đơn hàng delay</h2>
-<div>
-    <h4 id="total">Tổng:
-        <%= trackings.length %>
-    </h4>
-</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <h3 class="box-title">Đơn hàng delay
+        </h3>
+        <h5 id="total">Tổng:
+          <%= trackings.length %>
+        </h5>
+        <div class="box-tools">
+          <div class="input-group input-group-sm" style="width: 150px;">
+            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
 
-
-
-<div id="all-delay">
-    <table class="table" id="tab">
-        <thead class="thead-dark">
-            <tr>
-                <!-- <th scope="col">#</th> -->
-                <th scope="col">Mã vận đơn</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col">Lý do</th>
-                <th scope="col">Tiền thu hộ</th>
-                <th scope="col">Thông tin xử lý</th>
-            </tr>
-        </thead>
-    
-        <div id="divlist">
-            <% trackings.forEach(function(tracking, index){ %>
-                    <tbody id="tbody<%= tracking.label_id %>">
-    
-                        <td>
-                            <%=tracking.label_id%>
-                        </td>
-        
-                        <% for(let i = 0; i < status.length; i++){ %>
-                            <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
-                                <% if(tracking.arrJson[0].status_id == "4"){ %>
-                                    <td id="status<%=tracking.label_id%>">
-                                            <%= status[i].description %> <span style='color:red'>[Delay]</span>
-                                        </td>
-                                <% }else{ %>
-                                    <td id="status<%=tracking.label_id%>">
-                                            <%= status[i].description %>
-                                        </td>
-                                <% } %>
-                                
-                                <% } %>
-                                    <% } %>
-        
-                                    <td style="color:red" id="reason<%=tracking.label_id%>">
-                                        <% if(tracking.arrJson[0].status_id == "4" && tracking.arrJson[0].reason == ""){ %>
-                                            
-                                            <% for(let i = 1; i < tracking.arrJson.length; i++){ %>
-                                                <span style="color:blue">Lần
-                                                 <%= i %>:</span><span style="color:red"><%= tracking.arrJson[i].reason %></span>
-                                                <span  style='color:blue'>(<%= tracking.arrJson[i].action_time %>)<span>
-                                                
-                                                    <br />
-                                            
-                                        <% } %>
-                                    <% }else { %>
-                                        
-                                            <% tracking.arrJson.forEach((json, i) => { %>                                        
-                                                    <span style="color:blue">Lần
-                                                    <%= i + 1%>:</span>
-        
-                                                <span style="color: red"><%= json.reason %></span>
-                                                <span  style='color:blue'>(<%= json.action_time %>)<span>
-                                                    
-                                                        <br />
-                                                        <% }) %>                                    
-                                        
-                                    <% } %>
-                                    </td>  
-                                    <td style="color:red" id="reason<%=tracking.label_id%>">
-                                        <% if(tracking.arrJson[0].status_id == "4" &&tracking.arrJson[0].reason == ""){ %>
-                                            
-                                                <% for(let i = 1; i < tracking.arrJson.length; i++){ %>
-                                                    <span style="color:blue">Lần
-                                                     <%= i %>:</span><%= tracking.arrJson[i].pick_money %>                                   
-                                                        <br />
-                                                
-                                            <% } %>
-                                        <% }else{ %>
-                                           
-                                                <% tracking.arrJson.forEach((json, i) => { %>                                        
-                                                        <span style="color:blue">Lần
-                                                        <%= i + 1%>:</span>
-            
-                                                    <%= json.pick_money %>
-                                                            <br />
-                                                            <% }) %>                                    
-                                            
-                                        <% } %>
-                                    </td>
-                                        <td >
-                                            <div id=<%= tracking.label_id %>  data-toggle="modal" data-target="#myModal">
-                                                <% if(tracking.arrHandling){ %>
-                                                    <% tracking.arrHandling.forEach((h, i) => { %>
-                                                        <span style="color:blue">Lần <%= i + 1 %>: </span>
-                                                            <%= h %>
-                                                        
-                                                        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="height: 30px;">Xem</button> -->
-    <!-- Modal -->
-                                                            <div id="myModal" class="modal fade" role="dialog">
-                                                                <div class="modal-dialog">
-                                                                    <!-- Modal content-->
-                                                                    <div class="modal-content">
-                                                                    <img src="https://upload.wikimedia.org/wikipedia/en/b/b4/SailsJS_logo.png">
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                    </div>
-                                                                    </div>
-                                                              </div>
-                                                                </div>
-                                                            <br />
-                                                    <% }) %>
-                                                <% } %>
-                                            </div>
-                                                <input type="text" class="a" name="message" id="handling<%= tracking.label_id %>"   >
-                                                <button class="btn btn-success" value=<%= tracking.label_id %> onclick="saveMessage(this.value)" >Save</button>                                                 
-                                        </td>
-                    </tbody>
-                <% })%>   
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
         </div>
-    </table>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+          <thead class="thead-dark">
+          <tr>
+            <!-- <th scope="col">#</th> -->
+            <th scope="col">Mã vận đơn</th>
+            <th scope="col">Trạng thái</th>
+            <th scope="col">Lý do</th>
+            <th scope="col">Tiền thu hộ</th>
+            <th scope="col">Thông tin xử lý</th>
+          </tr>
+          </thead>
+          <div id="divlist">
+            <% trackings.forEach(function(tracking, index){ %>
+            <tbody id="tbody<%= tracking.label_id %>">
 
+            <td>
+              <%= tracking.label_id %>
+            </td>
+
+            <% for(let i = 0; i < status.length; i++){ %>
+            <% if(status[i].status_id == tracking.arrJson[tracking.arrJson.length - 1].status_id ){ %>
+            <% if(tracking.arrJson[0].status_id == "4"){ %>
+            <td id="status<%= tracking.label_id %>">
+              <%= status[i].description %> <span style='color:red'>[Delay]</span>
+            </td>
+            <% }else{ %>
+            <td id="status<%= tracking.label_id %>">
+              <%= status[i].description %>
+            </td>
+            <% } %>
+
+            <% } %>
+            <% } %>
+
+            <td style="color:red" id="reason<%= tracking.label_id %>">
+              <% if(tracking.arrJson[0].status_id == "4" && tracking.arrJson[0].reason == ""){ %>
+
+              <% for(let i = 1; i < tracking.arrJson.length; i++){ %>
+              <span style="color:blue">Lần
+                <%= i %>:</span><span style="color:red"><%= tracking.arrJson[i].reason %></span>
+              <span style='color:blue'>(<%= tracking.arrJson[i].action_time %>)<span>
+
+                                                    <br/>
+
+                  <% } %>
+                  <% }else { %>
+
+                  <% tracking.arrJson.forEach((json, i) => { %>
+                  <span style="color:blue">Lần
+                    <%= i + 1 %>:</span>
+
+                                                <span style="color: red"><%= json.reason %></span>
+                                                <span style='color:blue'>(<%= json.action_time %>)<span>
+
+                                                        <br/>
+                                                    <% }) %>
+
+                                                    <% } %>
+            </td>
+            <td style="color:red" id="reason<%= tracking.label_id %>">
+              <% if(tracking.arrJson[0].status_id == "4" && tracking.arrJson[0].reason == ""){ %>
+
+              <% for(let i = 1; i < tracking.arrJson.length; i++){ %>
+              <span style="color:blue">Lần
+                <%= i %>:</span><%= tracking.arrJson[i].pick_money %>
+              <br/>
+
+              <% } %>
+              <% }else{ %>
+
+              <% tracking.arrJson.forEach((json, i) => { %>
+              <span style="color:blue">Lần
+                <%= i + 1 %>:</span>
+
+              <%= json.pick_money %>
+              <br/>
+              <% }) %>
+
+              <% } %>
+            </td>
+            <td>
+              <div id=<%= tracking.label_id %>  data-toggle="modal" data-target="#myModal">
+                <% if(tracking.arrHandling){ %>
+                <% tracking.arrHandling.forEach((h, i) => { %>
+                <span style="color:blue">Lần <%= i + 1 %>: </span>
+                <%= h %>
+
+                <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="height: 30px;">Xem</button> -->
+                <!-- Modal -->
+                <div id="myModal" class="modal fade" role="dialog">
+                  <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <img src="https://upload.wikimedia.org/wikipedia/en/b/b4/SailsJS_logo.png">
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br/>
+                <% }) %>
+                <% } %>
+              </div>
+              <input type="text" class="a" name="message" id="handling<%= tracking.label_id %>">
+              <button class="btn btn-success" value=<%= tracking.label_id %> onclick="saveMessage(this.value)">Save
+              </button>
+            </td>
+            </tbody>
+            <% }) %>
+          </div>
+        </table>
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div>
 </div>
-
-
-    
 
 
 <script>
-    var objstatus = JSON.stringify(status);
+  var objstatus = JSON.stringify(status);
 
-    function toggle(){
-        $('#myModal').toggle(500);
-    }
+  function toggle() {
+    $('#myModal').toggle(500);
+  }
 
-    function postMessage() {
-        io.socket.post('/api/tracking', { message: 'thông điệp' }, function (resData, jwRes) {
-            if (jwRes.statusCode != 200) {
-                console.log('bad req')
-            } else {
-                console.log('good req')
-            }
-        })
-    }
-
-    function saveMessage(label_id) {
-
-            const messageSocket = document.getElementById("handling" + label_id).value
-            document.getElementById("handling" + label_id).value = "";
-            io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
-             });
-    }
-
-
-    io.socket.on('server-send-Message', function (msg) {
-
-        const { updatedTracking } = msg;
-
-        // alert(document.getElementById(updatedTracking.label_id).innerHTML);
-
-        let handling = "";
-
-        updatedTracking.arrHandling.forEach((h, i) => {
-            handling += "<span style='color:blue'>Lần " + ++i + ": </span>" + h + "<br />";
-        })
-        const hand = ` <div id=${updatedTracking.label_id}> ${handling} </div> `;
-
-        document.getElementById(updatedTracking.label_id).innerHTML = hand;
-
+  function postMessage() {
+    io.socket.post('/api/tracking', {message: 'thông điệp'}, function (resData, jwRes) {
+      if (jwRes.statusCode != 200) {
+        console.log('bad req')
+      } else {
+        console.log('good req')
+      }
     })
+  }
 
-    io.socket.on('new-tracking', function (msg) {
+  function saveMessage(label_id) {
 
-        const { newDelayTracking } = msg;
-        if(newDelayTracking){
+    const messageSocket = document.getElementById("handling" + label_id).value
+    document.getElementById("handling" + label_id).value = "";
+    io.socket.post('/handling', {messageSocket, label_id}, function (body, response) {
+    });
+  }
 
-        let id = newDelayTracking.label_id;
-        const tbody = `<tbody id="tbody${id}">`; 
-        const tbodyEnd = `</tbody>`;
-        const label = `<td>${newDelayTracking.label_id}</td>`;
-        const statusInfo = "<td>" + newDelayTracking.status_info + "</td>";
 
-        let reason = "";
-    
-        newDelayTracking.arrJson.forEach((e, i) => {
-            reason += "<span style='color:blue'>Lần " + ++i + ": </span>" + e.reason + "<span  style='color:blue'> (" + e.action_time + ")<span><br />";
-        })
+  io.socket.on('server-send-Message', function (msg) {
 
-        reason = "<td style='color:red'>" + reason + "</td>";
+    const {updatedTracking} = msg;
 
-        let pickMoney = "<td style='color:red'><span style='color:blue'>Lần " + 1 + ": </span><span >"+ newDelayTracking.arrJson[0].pick_money + "</span></td>";
- 
+    // alert(document.getElementById(updatedTracking.label_id).innerHTML);
 
-        const handle = `<td>    
-                            <div id=${newDelayTracking.label_id} ></div> 
-                            <input type="text" name="message" id="handling${newDelayTracking.label_id}">                   
+    let handling = "";
+
+    updatedTracking.arrHandling.forEach((h, i) => {
+      handling += "<span style='color:blue'>Lần " + ++i + ": </span>" + h + "<br />";
+    })
+    const hand = ` <div id=${updatedTracking.label_id}> ${handling} </div> `;
+
+    document.getElementById(updatedTracking.label_id).innerHTML = hand;
+
+  })
+
+  io.socket.on('new-tracking', function (msg) {
+
+    const {newDelayTracking} = msg;
+    if (newDelayTracking) {
+
+      let id = newDelayTracking.label_id;
+      const tbody = `<tbody id="tbody${id}">`;
+      const tbodyEnd = `</tbody>`;
+      const label = `<td>${newDelayTracking.label_id}</td>`;
+      const statusInfo = "<td>" + newDelayTracking.status_info + "</td>";
+
+      let reason = "";
+
+      newDelayTracking.arrJson.forEach((e, i) => {
+        reason += "<span style='color:blue'>Lần " + ++i + ": </span>" + e.reason + "<span  style='color:blue'> (" + e.action_time + ")<span><br />";
+      })
+
+      reason = "<td style='color:red'>" + reason + "</td>";
+
+      let pickMoney = "<td style='color:red'><span style='color:blue'>Lần " + 1 + ": </span><span >" + newDelayTracking.arrJson[0].pick_money + "</span></td>";
+
+
+      const handle = `<td>
+                            <div id=${newDelayTracking.label_id} ></div>
+                            <input type="text" name="message" id="handling${newDelayTracking.label_id}">
                             <button class="btn btn-success" value=${newDelayTracking.label_id} onclick="saveMessage(this.value)" >Save</button>
                         </td>`;
-        
-        $("tbody:eq(0)").before(tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd);   
-            
-        const n = $("tbody").length;
-        $("h4").text("Tổng: " + n);
-        }     
-    });
+
+      $("tbody:eq(0)").before(tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd);
+
+      const n = $("tbody").length;
+      $("h4").text("Tổng: " + n);
+    }
+  });
 
 
-    io.socket.on('update-tracking', function (msg) {
-        const { updatedTracking, status } = msg;
+  io.socket.on('update-tracking', function (msg) {
+    const {updatedTracking, status} = msg;
 
-    if(updatedTracking){
-        const id = updatedTracking.label_id;
-        const tbody = `<tbody id="tbody${id}">`;
-        const tbodyEnd = `</tbody>`;
-        const label = `<td>${updatedTracking.label_id}</td>`
-        const statusInfo = "<td>" + updatedTracking.status_info + "<span style='color:red'>[Delay]<span></td>";
+    if (updatedTracking) {
+      const id = updatedTracking.label_id;
+      const tbody = `<tbody id="tbody${id}">`;
+      const tbodyEnd = `</tbody>`;
+      const label = `<td>${updatedTracking.label_id}</td>`
+      const statusInfo = "<td>" + updatedTracking.status_info + "<span style='color:red'>[Delay]<span></td>";
 
-        let reason = "";
+      let reason = "";
 
-    if(updatedTracking.arrJson[0].status_id == '4' &&  updatedTracking.arrJson[0].reason == ''){
-         for(let i = 1; i< updatedTracking.arrJson.length; i++){
-        reason +="<span style='color:blue'>Lần " + i + ": </span><span style='color:red'>" + updatedTracking.arrJson[i].reason + "</span><span style='color:blue'> (" + updatedTracking.arrJson[i].action_time + ")<span><br />";
+      if (updatedTracking.arrJson[0].status_id == '4' && updatedTracking.arrJson[0].reason == '') {
+        for (let i = 1; i < updatedTracking.arrJson.length; i++) {
+          reason += "<span style='color:blue'>Lần " + i + ": </span><span style='color:red'>" + updatedTracking.arrJson[i].reason + "</span><span style='color:blue'> (" + updatedTracking.arrJson[i].action_time + ")<span><br />";
         }
-    }else{
+      } else {
         updatedTracking.arrJson.forEach((e, i) => {
-        reason += "<span style='color:blue'>Lần " + ++i + ": </span><span style='color:red'>" + e.reason + "</span><span style='color:blue'> (" + e.action_time + ")<span><br />";
+          reason += "<span style='color:blue'>Lần " + ++i + ": </span><span style='color:red'>" + e.reason + "</span><span style='color:blue'> (" + e.action_time + ")<span><br />";
         })
-    } 
+      }
 
-        reason = "<td>" + reason + "</td>";
+      reason = "<td>" + reason + "</td>";
 
-        let pickMoney = "";
+      let pickMoney = "";
 
-        if(updatedTracking.arrJson[0].status_id == '4' && updatedTracking.arrJson[0].reason == ''){
-            for(let i = 1; i < updatedTracking.arrJson.length; i++){
-                pickMoney+="<span style='color:blue'>Lần " + i + ": </span><span>" + updatedTracking.arrJson[i].pick_money + "</span><br />";
-            }
-        }else{
-            updatedTracking.arrJson.forEach((e, i) => {
-                pickMoney += "<span style='color:blue'>Lần " + ++i + ": </span><span>" + e.pick_money + "</span><br />";
-            }) 
+      if (updatedTracking.arrJson[0].status_id == '4' && updatedTracking.arrJson[0].reason == '') {
+        for (let i = 1; i < updatedTracking.arrJson.length; i++) {
+          pickMoney += "<span style='color:blue'>Lần " + i + ": </span><span>" + updatedTracking.arrJson[i].pick_money + "</span><br />";
         }
-        pickMoney = "<td style='color:red'>" + pickMoney + "</td>";
+      } else {
+        updatedTracking.arrJson.forEach((e, i) => {
+          pickMoney += "<span style='color:blue'>Lần " + ++i + ": </span><span>" + e.pick_money + "</span><br />";
+        })
+      }
+      pickMoney = "<td style='color:red'>" + pickMoney + "</td>";
 
-        const handle = `<td>    
-                            <div id=${updatedTracking.label_id} ></div> 
-                            <input type="text" name="message" id="handling${updatedTracking.label_id}">    
+      const handle = `<td>
+                            <div id=${updatedTracking.label_id} ></div>
+                            <input type="text" name="message" id="handling${updatedTracking.label_id}">
                             <button class="btn btn-success" value=${updatedTracking.label_id} onclick="saveMessage(this.value)" >Save</button>
                         </td>`;
 
 
-        $("tbody:eq(0)").before(tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd);
+      $("tbody:eq(0)").before(tbody + label + statusInfo + reason + pickMoney + handle + tbodyEnd);
 
-        document.getElementById("tbody" + updatedTracking.label_id).remove();
-        // $("#tbody" + updatedTracking.label_id).remove();
-    }       
+      document.getElementById("tbody" + updatedTracking.label_id).remove();
+      // $("#tbody" + updatedTracking.label_id).remove();
+    }
+  });
+
+  io.socket.on('server-send-handled-delay', function (msg) {
+    // console.log(msg);
+    const {handledDelay, notHandledDelays} = msg;
+
+    if (handledDelay) {
+      const soLuong = notHandledDelays.length;
+      document.getElementById("amount").innerHTML = soLuong;
+      document.getElementById('li' + handledDelay.label_id).remove();
+    }
+  })
+
+  function saveMessageLay(label_id) {
+    const messageSocket = document.getElementById("layhandling" + label_id).value
+
+    document.getElementById("handling" + label_id).value = "";
+    io.socket.post('/handling', {messageSocket, label_id}, function (body, response) {
     });
+  }
 
-    io.socket.on('server-send-handled-delay', function(msg){
-        // console.log(msg);
-        const { handledDelay, notHandledDelays } = msg;
-        
-        if( handledDelay ){   
-          const soLuong = notHandledDelays.length;
-          document.getElementById("amount").innerHTML = soLuong;
-          document.getElementById('li'+handledDelay.label_id).remove();
-        }
-      })
-
-    function saveMessageLay(label_id) {
-          const messageSocket = document.getElementById("layhandling" + label_id).value
-          
-          document.getElementById("handling" + label_id).value = "";
-          io.socket.post('/handling', { messageSocket, label_id }, function (body, response) {
-        });
-      } 
-    
-    postMessage();
+  postMessage();
 </script>
