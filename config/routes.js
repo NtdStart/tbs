@@ -72,7 +72,9 @@ module.exports.routes = {
     locals: {layout: 'layouts/layout-admin-lte'}
   },
   'GET /admin/tracking': 'Tracking.getAllTrackings',
-  'GET /admin/delay': {action: 'Tracking/getAllDelays', locals: {layout: 'layouts/layout-admin'}},
+  'GET /admin/delay': {
+    action: 'Tracking/getAllDelays', locals: {layout: 'layouts/layout-admin-lte'}
+  },
   'POST /admin/unhandle': {action: 'Tracking/getUnhandle'},
 
 
