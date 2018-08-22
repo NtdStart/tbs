@@ -14,7 +14,7 @@ module.exports.routes = {
   //  ╦ ╦╔═╗╔╗ ╔═╗╔═╗╔═╗╔═╗╔═╗
   //  ║║║║╣ ╠╩╗╠═╝╠═╣║ ╦║╣ ╚═╗
   //  ╚╩╝╚═╝╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝
-  'GET /': {action: 'view-homepage-or-redirect'},
+  'GET /': {action: 'entrance/view-login', locals: {layout: 'layouts/layout-login.ejs'}},
   'GET /welcome': {action: 'dashboard/view-welcome'},
 
   'GET /faq': {view: 'pages/faq'},
@@ -66,7 +66,11 @@ module.exports.routes = {
   // WEB PAGE ADMIN
   // sửa lại url tất cả đều phải đứng sau /admin
 
-  'GET /admin': {view: 'admin/ghtkAll', action: 'Tracking/getAllTrackings', locals: {layout: 'layouts/layout-admin-lte'}},
+  'GET /admin': {
+    view: 'admin/ghtkAll',
+    action: 'Tracking/getAllTrackings',
+    locals: {layout: 'layouts/layout-admin-lte'}
+  },
   'GET /admin/tracking': 'Tracking.getAllTrackings',
   'GET /admin/delay': {action: 'Tracking/getAllDelays', locals: {layout: 'layouts/layout-admin'}},
   'POST /admin/unhandle': {action: 'Tracking/getUnhandle'},
