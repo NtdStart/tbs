@@ -25,7 +25,7 @@
             <!-- <th scope="col">#</th> -->
             <th scope="col">Mã vận đơn</th>
             <th scope="col">Trạng thái</th>
-            <th scope="col">Lý do</th>
+            <th class="col-md-6" scope="col">Lý do</th>
             <th scope="col">Tiền thu hộ</th>
             <th scope="col">Thông tin xử lý</th>
           </tr>
@@ -124,7 +124,7 @@
                 <% } %>
               </div>
               <input type="text" class="a" name="message" id="handling<%= tracking.label_id %>">
-              <button class="btn btn-success" value=<%= tracking.label_id %> onclick="saveMessage(this.value)">Save
+              <button class="btn btn-success" value=<%= tracking.label_id %> onclick="saveMessage(this.value)"> Lưu
               </button>
             </td>
             </tbody>
